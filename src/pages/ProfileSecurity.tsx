@@ -10,6 +10,9 @@ import { motion } from "framer-motion";
 
 const ProfileSecurity: React.FC = () => {
   const { features, setFeature, safetyScore } = useSecuritySettings();
+  const user = React.useMemo(() => {
+    try { return JSON.parse(sessionStorage.getItem("currentUser") || "null"); } catch { return null; }
+  }, []);
 
   useEffect(() => {
     document.title = "Profile & Security — Bank of India";
@@ -53,15 +56,19 @@ const ProfileSecurity: React.FC = () => {
           <form onSubmit={handleSave} className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label>Full Name</Label>
-              <Input defaultValue="John Doe" />
+              <Input defaultValue={user?.name || ""} placeholder="Your name" />
             </div>
             <div className="space-y-2">
               <Label>Email</Label>
-              <Input type="email" defaultValue="john.doe@example.com" />
+              <Input type="email" defaultValue={user?.email || ""} placeholder="you@example.com" />
+            </div>
+            <div className="space-y-2 md:col-span-2">
+              <Label>Username</Label>
+              <Input defaultValue={user?.username || ""} placeholder="username" />
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label>Phone</Label>
-              <Input defaultValue="+91 98765 43210" />
+              <Input defaultValue={user?.phone || ""} placeholder="Your phone number" />
             </div>
             <div className="md:col-span-2 flex items-center justify-between rounded-md border p-3">
               <div>

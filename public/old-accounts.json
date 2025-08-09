@@ -1,3 +1,8 @@
 [
-  { "email": "asp616848@gmail.com", "password": "abhi123$$$" }
+  {
+    "email": "asp616848@gmail.com",
+    "password": "abhi123$$$",
+    "name": "Abhijeet Shashwat",
+    "username": "asp616848"
+  }
 ]

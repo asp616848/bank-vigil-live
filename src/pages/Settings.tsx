@@ -8,6 +8,9 @@ import { useSecuritySettings } from "@/hooks/useSecuritySettings";
 
 const Settings: React.FC = () => {
   const { features, setFeature, safetyScore, allOn } = useSecuritySettings();
+  const user = React.useMemo(() => {
+    try { return JSON.parse(sessionStorage.getItem("currentUser") || "null"); } catch { return null; }
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -23,15 +26,15 @@ const Settings: React.FC = () => {
         <CardContent className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <Label>Full Name</Label>
-            <Input defaultValue="John Doe" />
+            <Input defaultValue={user?.name || ""} placeholder="Your name" />
           </div>
           <div className="space-y-2">
             <Label>Email</Label>
-            <Input type="email" defaultValue="john@bank.com" />
+            <Input type="email" defaultValue={user?.email || ""} placeholder="you@example.com" />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label>Phone</Label>
-            <Input defaultValue="+91 98765 43210" />
+            <Label>Username</Label>
+            <Input defaultValue={user?.username || ""} placeholder="username" />
           </div>
         </CardContent>
       </Card>

@@ -9,6 +9,8 @@ import { toast } from "@/hooks/use-toast";
 const ACCOUNTS_OLD_URL = "/old-accounts.json";
 const ACCOUNTS_NEW_URL = "/new-accounts.json";
 
+type Account = { email: string; password: string; name: string; username: string };
+
 const passwordValid = (pwd: string) => {
   // at least 8 chars, includes letters, numbers, and symbols
   const hasLen = pwd.length >= 8;
@@ -23,8 +25,10 @@ const Login: React.FC = () => {
   const [mode, setMode] = useState<"login" | "create">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [loading, setLoading] = useState(false);
-  const [accounts, setAccounts] = useState<Array<{ email: string; password: string }>>([]);
+  const [accounts, setAccounts] = useState<Account[]>([]);
 
   useEffect(() => {
     // fetch both old and new accounts and merge in-memory
@@ -34,8 +38,8 @@ const Login: React.FC = () => {
           fetch(ACCOUNTS_OLD_URL),
           fetch(ACCOUNTS_NEW_URL),
         ]);
-        const old = (await oldRes.json()) as Array<{ email: string; password: string }>;
-        const neu = (await neuRes.json()) as Array<{ email: string; password: string }>;
+        const old = (await oldRes.json()) as Account[];
+        const neu = (await neuRes.json()) as Account[];
         setAccounts([...(old || []), ...(neu || [])]);
       } catch (e) {
         console.error(e);
@@ -44,14 +48,12 @@ const Login: React.FC = () => {
     load();
   }, []);
 
-  const saveNewAccount = async (acc: { email: string; password: string }) => {
-    // Since public assets are static, attempt to use localStorage as a fallback to persist created accounts in the browser.
+  const saveNewAccount = async (acc: Account) => {
     try {
-      const key = "newAccounts";
+      const key = "newAccountsV2"; // new schema
       const existing = JSON.parse(localStorage.getItem(key) || "[]");
       const next = [...existing, acc];
       localStorage.setItem(key, JSON.stringify(next));
-      // reflect in memory
       setAccounts((prev) => [...prev, acc]);
     } catch (e) {
       console.error("Failed to store account locally", e);
@@ -61,12 +63,18 @@ const Login: React.FC = () => {
   useEffect(() => {
     // also merge locally created accounts (if any) on mount
     try {
-      const local = JSON.parse(localStorage.getItem("newAccounts") || "[]");
-      if (Array.isArray(local) && local.length) {
+      const localLegacy = JSON.parse(localStorage.getItem("newAccounts") || "[]");
+      const localV2 = JSON.parse(localStorage.getItem("newAccountsV2") || "[]");
+      const normalizedLegacy: Account[] = Array.isArray(localLegacy)
+        ? localLegacy.map((l: any) => ({ email: l.email, password: l.password, name: l.name || "", username: l.username || l.email?.split("@")[0] || "user" }))
+        : [];
+      const v2: Account[] = Array.isArray(localV2) ? localV2 : [];
+      const merged = [...normalizedLegacy, ...v2];
+      if (merged.length) {
         setAccounts((prev) => {
-          const map = new Map(prev.map((p) => [p.email, p.password]));
-          local.forEach((l: any) => map.set(l.email, l.password));
-          return Array.from(map.entries()).map(([email, password]) => ({ email, password }));
+          const map = new Map(prev.map((p) => [p.email.toLowerCase(), p]));
+          merged.forEach((m) => map.set(m.email.toLowerCase(), m));
+          return Array.from(map.values());
         });
       }
     } catch {}
@@ -77,6 +85,10 @@ const Login: React.FC = () => {
     setLoading(true);
     try {
       if (mode === "create") {
+        if (!name.trim() || !username.trim()) {
+          toast({ title: "Missing details", description: "Enter name and username.", variant: "destructive" });
+          return;
+        }
         if (!passwordValid(password)) {
           toast({ title: "Weak password", description: "Use at least 8 chars with letters, numbers, and symbols.", variant: "destructive" });
           return;
@@ -86,7 +98,8 @@ const Login: React.FC = () => {
           toast({ title: "Account exists", description: "Try signing in instead." });
           return;
         }
-        await saveNewAccount({ email, password });
+        const acc: Account = { email, password, name, username };
+        await saveNewAccount(acc);
         toast({ title: "Account created", description: "Proceed to sign in." });
         setMode("login");
         return;
@@ -101,10 +114,14 @@ const Login: React.FC = () => {
         return;
       }
 
-      // mark pending 2FA and go to verify page
-      sessionStorage.setItem("pending2FA", JSON.stringify({ email, ts: Date.now() }));
-      toast({ title: "2FA required", description: "Verify your identity to continue." });
-      setTimeout(() => navigate("/verify-2fa"), 300);
+      // store current user for UI use
+      sessionStorage.setItem(
+        "currentUser",
+        JSON.stringify({ email: found.email, name: found.name, username: found.username })
+      );
+
+      toast({ title: "Welcome back", description: `Signed in as ${found.name}` });
+      setTimeout(() => navigate("/app/dashboard"), 400);
     } finally {
       setLoading(false);
     }
@@ -128,6 +145,19 @@ const Login: React.FC = () => {
         </header>
 
         <form onSubmit={onSubmit} className="space-y-4">
+          {mode === "create" && (
+            <>
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input id="name" required placeholder="Jane Doe" value={name} onChange={(e) => setName(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input id="username" required placeholder="jane_doe" value={username} onChange={(e) => setUsername(e.target.value)} />
+              </div>
+            </>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
             <Input id="email" type="email" required placeholder="you@bank.com" value={email} onChange={(e) => setEmail(e.target.value)} />

@@ -1,11 +1,13 @@
 import React from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { RiskSidebar } from "@/components/RiskSidebar";
 import { TopBar } from "@/components/TopBar";
 import { RiskProvider } from "@/hooks/useRiskData";
 import { BiometricDialog } from "@/components/BiometricDialog";
+import { AnimatePresence, motion } from "framer-motion";
 
 const AppLayout: React.FC = () => {
+  const location = useLocation();
   return (
     <RiskProvider>
       <div className="min-h-screen w-full grid md:grid-cols-[minmax(260px,320px)_1fr]">
@@ -14,8 +16,12 @@ const AppLayout: React.FC = () => {
         </div>
         <div className="flex flex-col">
           <TopBar />
-          <main className="container mx-auto p-4 md:p-6 animate-fade-in">
-            <Outlet />
+          <main className="container mx-auto p-4 md:p-6">
+            <AnimatePresence mode="wait">
+              <motion.div key={location.pathname} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
+                <Outlet />
+              </motion.div>
+            </AnimatePresence>
           </main>
         </div>
       </div>

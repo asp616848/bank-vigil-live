@@ -6,9 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { motion } from "framer-motion";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Payments: React.FC = () => {
   const [sending, setSending] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,37 +22,40 @@ const Payments: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <header>
+      <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Payments</h1>
+        <Button variant="ghost" onClick={() => navigate("/app/dashboard")}>
+          Back to Dashboard
+        </Button>
       </header>
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Send Money</CardTitle>
+          <CardTitle className="text-sm">Send Payment</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
-              <Label>From Account</Label>
+            <div className="space-y-1">
+              <Label>Recipient</Label>
+              <Input placeholder="Name or UPI ID" required />
+            </div>
+            <div className="space-y-1">
+              <Label>Amount</Label>
+              <Input type="number" min={1} placeholder="INR" required />
+            </div>
+            <div className="space-y-1">
+              <Label>Source Account</Label>
               <Select defaultValue="savings">
                 <SelectTrigger>
                   <SelectValue placeholder="Select account" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="savings">Savings • **** 2190</SelectItem>
-                  <SelectItem value="current">Current • **** 9981</SelectItem>
+                  <SelectItem value="savings">Savings **** 2190</SelectItem>
+                  <SelectItem value="salary">Salary **** 9912</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            <div className="space-y-2">
-              <Label>To Account</Label>
-              <Input placeholder="Account number / UPI ID" required />
-            </div>
-            <div className="space-y-2">
-              <Label>Amount (INR)</Label>
-              <Input type="number" min={1} step={1} placeholder="1000" required />
-            </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               <Label>Purpose</Label>
               <Input placeholder="Payment note" />
             </div>

@@ -7,6 +7,18 @@ import { LineChart, Line, ResponsiveContainer, Tooltip, YAxis } from "recharts";
 import { motion } from "framer-motion";
 import { ShieldAlert, WifiOff, Smartphone, Keyboard, MapPin } from "lucide-react";
 
+const Light: React.FC<{ active: boolean }> = ({ active }) => (
+  <motion.span
+    className={`h-3 w-3 rounded-full ${active ? "bg-red-500" : "bg-emerald-500"}`}
+    animate={active ? { boxShadow: [
+      "0 0 0 0 rgba(239,68,68,0.7)",
+      "0 0 0 6px rgba(239,68,68,0.1)",
+      "0 0 0 0 rgba(239,68,68,0.0)"
+    ] } : {}}
+    transition={active ? { repeat: Infinity, duration: 1.6 } : {}}
+  />
+);
+
 const IndicatorRow: React.FC<{ label: string; active: boolean; Icon: React.ElementType }>
   = ({ label, active, Icon }) => {
   return (
@@ -15,19 +27,7 @@ const IndicatorRow: React.FC<{ label: string; active: boolean; Icon: React.Eleme
         <Icon className="h-4 w-4 text-muted-foreground" />
         <span className="text-sm">{label}</span>
       </div>
-      <motion.div
-        aria-hidden
-        className={`h-5 w-10 rounded-full border flex items-center ${active ? "bg-destructive/80" : "bg-muted"}`}
-        animate={{ backgroundColor: active ? "hsl(0 84% 60% / 0.85)" : "hsl(var(--muted))" }}
-        transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      >
-        <motion.span
-          className="h-4 w-4 rounded-full bg-background shadow-sm"
-          initial={false}
-          animate={{ x: active ? 22 : 2 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        />
-      </motion.div>
+      <Light active={active} />
     </div>
   );
 };

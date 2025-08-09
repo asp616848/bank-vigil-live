@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { useSecuritySettings } from "@/hooks/useSecuritySettings";
 
 const Settings: React.FC = () => {
-  const [biometric, setBiometric] = useState(true);
+  const { features, setFeature, safetyScore, allOn } = useSecuritySettings();
 
   return (
     <div className="space-y-6">
-      <header>
+      <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Settings / Profile</h1>
+        <div className="text-sm text-muted-foreground">Safety Score: {Math.round(safetyScore)}</div>
       </header>
 
       <Card>
@@ -36,16 +38,26 @@ const Settings: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm">Security</CardTitle>
+          <CardTitle className="text-sm">Security Settings</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-sm font-medium">Biometric Authentication</div>
-              <div className="text-xs text-muted-foreground">Use device biometrics for sensitive actions</div>
+        <CardContent className="space-y-3">
+          {[
+            { key: "simSwap", label: "SIM Swap Detection", desc: "Monitor SIM changes to prevent account takeover." },
+            { key: "vpnProxy", label: "VPN / Proxy Detection", desc: "Detect anonymized network access that may indicate fraud." },
+            { key: "deviceChange", label: "Device Change Detection", desc: "Identify logins from new or risky devices." },
+            { key: "typingAnomaly", label: "Typing Anomaly Detection", desc: "Analyze keystroke patterns for anomalies." },
+            { key: "locationMismatch", label: "Location Mismatch Detection", desc: "Compare login location to typical behavior." },
+            { key: "biometric", label: "Biometric Verification", desc: "Require biometrics for sensitive actions." },
+          ].map((item) => (
+            <div key={item.key} className="flex items-center justify-between rounded-md border p-3">
+              <div>
+                <div className="text-sm font-medium">{item.label}</div>
+                <div className="text-xs text-muted-foreground">{item.desc}</div>
+              </div>
+              <Switch checked={(features as any)[item.key]} onCheckedChange={(v) => setFeature(item.key as any, v)} />
             </div>
-            <Switch checked={biometric} onCheckedChange={setBiometric} />
-          </div>
+          ))}
+          <div className="text-xs text-muted-foreground">{allOn ? "All protections are enabled." : "Enable all protections to maximize your Safety Score."}</div>
           <Button>Update Settings</Button>
         </CardContent>
       </Card>

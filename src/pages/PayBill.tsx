@@ -9,10 +9,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const PayBill: React.FC = () => {
   const [sending, setSending] = useState(false);
   const [dueDate, setDueDate] = useState<Date | undefined>(new Date());
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Pay Bill — Bank of India";
@@ -28,8 +30,9 @@ const PayBill: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <header>
+      <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Pay Bill</h1>
+        <Button variant="ghost" onClick={() => navigate("/app/dashboard")}>Back to Dashboard</Button>
       </header>
 
       <Card>

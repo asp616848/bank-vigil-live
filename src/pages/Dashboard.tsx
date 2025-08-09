@@ -5,29 +5,30 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowDownRight, ArrowUpRight, CreditCard, FileText, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
+import { useSearch } from "@/hooks/useSearch";
 const transactions = [
   { id: 1, type: "Debit", desc: "UPI Payment - Grocery", amount: -1250.5, date: "2025-08-01" },
   { id: 2, type: "Credit", desc: "Salary - August", amount: 85000, date: "2025-08-01" },
   { id: 3, type: "Debit", desc: "Electricity Bill", amount: -2140, date: "2025-08-03" },
-  { id: 4, type: "Debit", desc: "Movie Tickets", amount: -780, date: "2025-08-05" },
+  { id: 4, type: "Debit", desc: "Mobile Recharge", amount: -399, date: "2025-08-04" },
+  { id: 5, type: "Debit", desc: "Dining - The Spice House", amount: -1480, date: "2025-08-04" },
 ];
 
-const currency = (n: number) =>
-  new Intl.NumberFormat(undefined, { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
+function currency(n: number) {
+  return n.toLocaleString("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
+}
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const trendData = useMemo(() => {
-    const days = 30;
-    const today = new Date();
+  const { query } = useSearch();
+
+  const balanceSeries = useMemo(() => {
     const data: { date: string; balance: number }[] = [];
-    let balance = 120000;
-    for (let i = days - 1; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      // simulate daily change
-      const delta = Math.round((Math.random() - 0.4) * 4000);
-      balance = Math.max(20000, balance + delta);
+    let balance = 125000;
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      balance += Math.sin(i / 3) * 300 - 100;
       const label = d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
       data.push({ date: label, balance });
     }
@@ -36,6 +37,15 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     document.title = "Home Dashboard — Bank of India";
   }, []);
+
+  const filteredTx = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return transactions;
+    return transactions.filter((t) =>
+      [t.desc, t.type, t.date, String(t.amount)].some((f) => f.toLowerCase().includes(q))
+    );
+  }, [query]);
+
   return (
     <div className="space-y-6">
       <header>
@@ -75,9 +85,15 @@ const Dashboard: React.FC = () => {
       <section>
         <h2 className="text-sm font-semibold mb-3">Quick Actions</h2>
         <div className="flex flex-wrap gap-3">
-          <Button className="hover-scale" onClick={() => navigate("/app/transfers")}> <Send className="mr-2 h-4 w-4" /> Transfer Money</Button>
-          <Button variant="secondary" className="hover-scale" onClick={() => navigate("/app/pay-bill")}><CreditCard className="mr-2 h-4 w-4" /> Pay Bill</Button>
-          <Button variant="outline" className="hover-scale" onClick={() => navigate("/app/statements")}><FileText className="mr-2 h-4 w-4" /> View Statements</Button>
+          <Button className="hover-scale" onClick={() => navigate("/app/transfers")}>
+            <Send className="mr-2 h-4 w-4" /> Transfer Money
+          </Button>
+          <Button variant="secondary" className="hover-scale" onClick={() => navigate("/app/pay-bill")}>
+            <CreditCard className="mr-2 h-4 w-4" /> Pay Bill
+          </Button>
+          <Button variant="outline" className="hover-scale" onClick={() => navigate("/app/statements")}>
+            <FileText className="mr-2 h-4 w-4" /> View Statements
+          </Button>
         </div>
       </section>
 
@@ -94,7 +110,7 @@ const Dashboard: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {transactions.map((t) => (
+              {filteredTx.map((t) => (
                 <tr key={t.id} className="hover:bg-muted/30">
                   <td className="p-3">{t.date}</td>
                   <td className="p-3">{t.desc}</td>
@@ -114,17 +130,17 @@ const Dashboard: React.FC = () => {
         <h2 className="text-sm font-semibold mb-3">Balance Trend (Last 30 Days)</h2>
         <div className="h-64 w-full rounded-md border">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={trendData} margin={{ left: 8, right: 8, top: 8, bottom: 8 }}>
+            <AreaChart data={balanceSeries} margin={{ left: 6, right: 6, top: 10, bottom: 0 }}>
               <defs>
-                <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.35} />
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                <linearGradient id="grad" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
-              <XAxis dataKey="date" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} />
-              <Tooltip />
-              <Area type="monotone" dataKey="balance" stroke="hsl(var(--primary))" fill="url(#balanceGradient)" strokeWidth={2} />
+              <XAxis dataKey="date" hide />
+              <YAxis hide />
+              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))" }} />
+              <Area dataKey="balance" stroke="hsl(var(--primary))" fill="url(#grad)" strokeWidth={2} />
             </AreaChart>
           </ResponsiveContainer>
         </div>

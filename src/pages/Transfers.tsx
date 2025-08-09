@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Transfers: React.FC = () => {
   const [sending, setSending] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Transfers — Bank of India";
@@ -22,8 +24,11 @@ const Transfers: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <header>
+      <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Transfers</h1>
+        <Button variant="ghost" onClick={() => navigate("/app/dashboard")}>
+          Back to Dashboard
+        </Button>
       </header>
 
       <Card>

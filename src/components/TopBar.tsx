@@ -20,6 +20,25 @@ export const TopBar: React.FC = () => {
   const { query, setQuery } = useSearch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [user, setUser] = useState<{ name: string; email: string; username: string } | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("currentUser");
+      if (raw) setUser(JSON.parse(raw));
+    } catch {}
+  }, []);
+
+  const initials = React.useMemo(() => {
+    if (!user?.name) return "JD";
+    return user.name
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((s) => s[0]?.toUpperCase())
+      .join("");
+  }, [user]);
+
   const pageTitle = React.useMemo(() => {
     const p = location.pathname;
     const map: Record<string, string> = {
@@ -149,14 +168,14 @@ export const TopBar: React.FC = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="secondary" className="flex items-center gap-2">
                   <Avatar className="h-6 w-6">
-                    <AvatarFallback>JD</AvatarFallback>
+                    <AvatarFallback>{initials}</AvatarFallback>
                   </Avatar>
-                  <span className="hidden sm:inline">John Doe</span>
+                  <span className="hidden sm:inline">{user?.name || "John Doe"}</span>
                   <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Account</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.email || "Account"}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate("/app/profile-security")}>
                   <User className="mr-2 h-4 w-4" /> Profile
@@ -164,7 +183,10 @@ export const TopBar: React.FC = () => {
                 <DropdownMenuItem onClick={() => navigate("/app/settings")}>
                   <User className="mr-2 h-4 w-4" /> Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/")}>
+                <DropdownMenuItem onClick={() => {
+                  sessionStorage.removeItem("currentUser");
+                  navigate("/");
+                }}>
                   <LogOut className="mr-2 h-4 w-4" /> Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>

@@ -1,0 +1,6 @@
+Flask
+requests
+python-dotenv
+base64
+dotenv
+os

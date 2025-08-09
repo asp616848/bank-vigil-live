@@ -16,6 +16,7 @@ import Cards from "./pages/Cards";
 import ProfileSecurity from "./pages/ProfileSecurity";
 import { SecuritySettingsProvider } from "@/hooks/useSecuritySettings";
 import { SearchProvider } from "@/hooks/useSearch";
+import TypingDNAForm from "./pages/Typingdna";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
                 <Route path="statements" element={<Statements />} />
                 <Route path="cards" element={<Cards />} />
                 <Route path="profile-security" element={<ProfileSecurity />} />
+                <Route path="dnaform" element={<TypingDNAForm />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

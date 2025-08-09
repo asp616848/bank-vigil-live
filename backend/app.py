@@ -1,12 +1,13 @@
 from flask import Flask, request, jsonify
+import flask_cors
 import requests
 import os
-import base64
 from dotenv import load_dotenv
+from requests.auth import HTTPBasicAuth
 
 load_dotenv()
-
 app = Flask(__name__)
+flask_cors.CORS(app)
 
 API_KEY = os.getenv("TYPINGDNA_API_KEY")
 API_SECRET = os.getenv("TYPINGDNA_API_SECRET")
@@ -16,22 +17,39 @@ def verify_typing():
     data = request.get_json()
     user_id = data.get("userId")
     tp = data.get("tp")
+    textid = data.get("textid")
 
-    auth_header = base64.b64encode(f"{API_KEY}:{API_SECRET}".encode()).decode()
-
+    if not user_id or not tp:
+        return jsonify({"error": "Missing userId or typing pattern"}), 400
     try:
-        r = requests.post(
-            f"https://api.typingdna.com/auto/{user_id}",
-            headers={
-                "Authorization": f"Basic {auth_header}",
-                "Content-Type": "application/x-www-form-urlencoded"
-            },
-            data={"tp": tp}
-        )
+        # 1. Check user enrollments
+        r_status = requests.get(f"https://api.typingdna.com/user/{user_id}",
+                                auth=HTTPBasicAuth(API_KEY, API_SECRET))
+        status_data = r_status.json()
+        patterns_count = status_data.get("count", 0)
 
-        return jsonify(r.json())
+        if patterns_count < 3:
+            # 2. Enroll pattern
+            payload = {"tp": tp}
+            if textid:
+                payload["textid"] = textid
+            r_save = requests.post(f"https://api.typingdna.com/save/{user_id}",
+                                   data=payload,
+                                   auth=HTTPBasicAuth(API_KEY, API_SECRET))
+            return jsonify({"status": "enrolled", "details": r_save.json()})
+        else:
+            # 3. Verify pattern
+            payload = {"tp": tp}
+            if textid:
+                payload["textid"] = textid
+            r_verify = requests.post(f"https://api.typingdna.com/verify/{user_id}",
+                                     data=payload,
+                                     auth=HTTPBasicAuth(API_KEY, API_SECRET))
+            print(r_verify.json())
+            return jsonify({"status": "verified", "details": r_verify.json()})
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(port=5000, debug=True)

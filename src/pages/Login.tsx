@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 const ACCOUNTS_OLD_URL = "/old-accounts.json";
 const ACCOUNTS_NEW_URL = "/new-accounts.json";
@@ -12,7 +13,6 @@ const ACCOUNTS_NEW_URL = "/new-accounts.json";
 type Account = { email: string; password: string; name: string; username: string };
 
 const passwordValid = (pwd: string) => {
-  // at least 8 chars, includes letters, numbers, and symbols
   const hasLen = pwd.length >= 8;
   const hasLetter = /[A-Za-z]/.test(pwd);
   const hasNumber = /\d/.test(pwd);
@@ -30,9 +30,37 @@ const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [accounts, setAccounts] = useState<Account[]>([]);
 
+  // TypingDNA refs and state
+  const tdnaRef = useRef<any>(null);
+  const [isTypingDNAReady, setTypingDNAReady] = useState(false);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
-    // fetch both old and new accounts and merge in-memory
-    const load = async () => {
+    const script = document.createElement("script");
+    script.src = "/typingdna.js";
+    script.async = true;
+    script.onload = () => {
+      if ((window as any).TypingDNA) {
+        tdnaRef.current = new (window as any).TypingDNA();
+        setTypingDNAReady(true);
+      } else {
+        toast({ title: "Biometrics failed", description: "Could not load TypingDNA.", variant: "destructive" });
+      }
+    };
+    script.onerror = () => {
+      toast({ title: "Biometrics failed", description: "Could not load TypingDNA script.", variant: "destructive" });
+    };
+    document.body.appendChild(script);
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const loadAccounts = async () => {
       try {
         const [oldRes, neuRes] = await Promise.all([
           fetch(ACCOUNTS_OLD_URL),
@@ -40,17 +68,21 @@ const Login: React.FC = () => {
         ]);
         const old = (await oldRes.json()) as Account[];
         const neu = (await neuRes.json()) as Account[];
-        setAccounts([...(old || []), ...(neu || [])]);
+        const localV2 = JSON.parse(localStorage.getItem("newAccountsV2") || "[]") as Account[];
+        
+        const allAccounts = [...(old || []), ...(neu || []), ...localV2];
+        const uniqueAccounts = Array.from(new Map(allAccounts.map(acc => [acc.email.toLowerCase(), acc])).values());
+        setAccounts(uniqueAccounts);
       } catch (e) {
-        console.error(e);
+        console.error("Failed to load accounts", e);
       }
     };
-    load();
+    loadAccounts();
   }, []);
 
   const saveNewAccount = async (acc: Account) => {
     try {
-      const key = "newAccountsV2"; // new schema
+      const key = "newAccountsV2";
       const existing = JSON.parse(localStorage.getItem(key) || "[]");
       const next = [...existing, acc];
       localStorage.setItem(key, JSON.stringify(next));
@@ -60,29 +92,25 @@ const Login: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    // also merge locally created accounts (if any) on mount
-    try {
-      const localLegacy = JSON.parse(localStorage.getItem("newAccounts") || "[]");
-      const localV2 = JSON.parse(localStorage.getItem("newAccountsV2") || "[]");
-      const normalizedLegacy: Account[] = Array.isArray(localLegacy)
-        ? localLegacy.map((l: any) => ({ email: l.email, password: l.password, name: l.name || "", username: l.username || l.email?.split("@")[0] || "user" }))
-        : [];
-      const v2: Account[] = Array.isArray(localV2) ? localV2 : [];
-      const merged = [...normalizedLegacy, ...v2];
-      if (merged.length) {
-        setAccounts((prev) => {
-          const map = new Map(prev.map((p) => [p.email.toLowerCase(), p]));
-          merged.forEach((m) => map.set(m.email.toLowerCase(), m));
-          return Array.from(map.values());
-        });
-      }
-    } catch {}
-  }, []);
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (!isTypingDNAReady) {
+      toast({ title: "Please wait", description: "Biometrics are initializing.", variant: "destructive" });
+      setLoading(false);
+      return;
+    }
+
+    let tp = "";
+    try {
+      tp = tdnaRef.current.getTypingPattern({ type: 1, text: password });
+    } catch (err: any) {
+      toast({ title: "Capture failed", description: err?.message || "Could not capture typing pattern.", variant: "destructive" });
+      setLoading(false);
+      return;
+    }
+
     try {
       if (mode === "create") {
         if (!name.trim() || !username.trim()) {
@@ -98,14 +126,27 @@ const Login: React.FC = () => {
           toast({ title: "Account exists", description: "Try signing in instead." });
           return;
         }
-        const acc: Account = { email, password, name, username };
-        await saveNewAccount(acc);
-        toast({ title: "Account created", description: "Proceed to sign in." });
-        setMode("login");
+
+        // Enroll typing pattern
+        const res = await fetch("http://localhost:5000/typingdna/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: email, tp }),
+        });
+        const data = await res.json();
+
+        if (data.status === 'enrolled' && data.details?.success) {
+          const acc: Account = { email, password, name, username };
+          await saveNewAccount(acc);
+          toast({ title: "Account created", description: "Your typing pattern is registered. Please sign in." });
+          setMode("login");
+        } else {
+          toast({ title: "Creation Failed", description: data.details?.message || "Could not register typing pattern.", variant: "destructive" });
+        }
         return;
       }
 
-      // login mode: verify credentials
+      // Login mode
       const found = accounts.find(
         (a) => a.email.toLowerCase() === email.toLowerCase() && a.password === password
       );
@@ -114,14 +155,33 @@ const Login: React.FC = () => {
         return;
       }
 
-      // store current user for UI use
-      sessionStorage.setItem(
-        "currentUser",
-        JSON.stringify({ email: found.email, name: found.name, username: found.username })
-      );
+      // Verify typing pattern
+      const res = await fetch("http://localhost:5000/typingdna/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: email, tp }),
+      });
+      const data = await res.json();
 
-      toast({ title: "Welcome back", description: `Signed in as ${found.name}` });
-      setTimeout(() => navigate("/app/dashboard"), 400);
+      if (data.status === 'verified' && data.details?.result === 1) {
+        sessionStorage.setItem("currentUser", JSON.stringify({ email: found.email, name: found.name, username: found.username }));
+        toast({ title: "Welcome back!", description: `Signed in as ${found.name}` });
+        setTimeout(() => navigate("/app/dashboard"), 400);
+      } else if (data.status === 'enrolled') {
+        // User has less than 3 patterns, but password is correct. Enroll and log in.
+        sessionStorage.setItem("currentUser", JSON.stringify({ email: found.email, name: found.name, username: found.username }));
+        toast({ title: "Pattern Saved", description: `Signed in as ${found.name}. More patterns will improve security.` });
+        setTimeout(() => navigate("/app/dashboard"), 400);
+      } else {
+        toast({
+          title: "Biometric Mismatch",
+          description: "Typing pattern has changed. Please login via secured OTP sent to your mail.",
+          variant: "destructive",
+          duration: 6000,
+        });
+      }
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message || "An unexpected error occurred.", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -164,15 +224,16 @@ const Login: React.FC = () => {
           </div>
           <div className="space-y-2">
             <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input ref={passwordInputRef} id="password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
             {mode === "create" && (
               <p className="text-xs text-muted-foreground">
                 Password must be 8+ chars and include letters, numbers, and symbols.
               </p>
             )}
           </div>
-          <Button disabled={loading} type="submit" className="w-full hover-scale">
-            {mode === "login" ? (loading ? "Signing in..." : "Sign In") : (loading ? "Creating..." : "Create Account")}
+          <Button disabled={loading || !isTypingDNAReady} type="submit" className="w-full hover-scale">
+            {loading ? <Loader2 className="animate-spin" /> : (mode === "login" ? "Sign In" : "Create Account")}
+            {!isTypingDNAReady && " (Initializing Biometrics...)"}
           </Button>
         </form>
 

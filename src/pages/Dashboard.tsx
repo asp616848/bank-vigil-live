@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -6,13 +6,6 @@ import { ArrowDownRight, ArrowUpRight, CreditCard, FileText, Send } from "lucide
 import { useNavigate } from "react-router-dom";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 import { useSearch } from "@/hooks/useSearch";
-const transactions = [
-  { id: 1, type: "Debit", desc: "UPI Payment - Grocery", amount: -1250.5, date: "2025-08-01" },
-  { id: 2, type: "Credit", desc: "Salary - August", amount: 85000, date: "2025-08-01" },
-  { id: 3, type: "Debit", desc: "Electricity Bill", amount: -2140, date: "2025-08-03" },
-  { id: 4, type: "Debit", desc: "Mobile Recharge", amount: -399, date: "2025-08-04" },
-  { id: 5, type: "Debit", desc: "Dining - The Spice House", amount: -1480, date: "2025-08-04" },
-];
 
 function currency(n: number) {
   return n.toLocaleString("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
@@ -21,6 +14,28 @@ function currency(n: number) {
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { query } = useSearch();
+
+  const [transactions, setTransactions] = useState<{ id: number; type: string; desc: string; amount: number; date: string }[]>([]);
+  useEffect(() => {
+    let active = true;
+    fetch("/transactions.json")
+      .then((r) => r.json())
+      .then((rows: { date: string; description: string; amount: number }[]) => {
+        if (!active) return;
+        const mapped = (rows || []).slice(-5).map((r, idx) => ({
+          id: idx + 1,
+          type: r.amount >= 0 ? "Credit" : "Debit",
+          desc: r.description,
+          amount: r.amount,
+          date: r.date,
+        }));
+        setTransactions(mapped);
+      })
+      .catch(() => setTransactions([]));
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const balanceSeries = useMemo(() => {
     const data: { date: string; balance: number }[] = [];
@@ -41,10 +56,8 @@ const Dashboard: React.FC = () => {
   const filteredTx = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return transactions;
-    return transactions.filter((t) =>
-      [t.desc, t.type, t.date, String(t.amount)].some((f) => f.toLowerCase().includes(q))
-    );
-  }, [query]);
+    return transactions.filter((t) => [t.desc, t.type, t.date, String(t.amount)].some((f) => f.toLowerCase().includes(q)));
+  }, [query, transactions]);
 
   return (
     <div className="space-y-6">

@@ -4,3 +4,4 @@ python-dotenv
 base64
 dotenv
 os
+flask_cors

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 
 // Replace direct JSON access with backend API endpoints
 const ACCOUNTS_API = "http://localhost:5000/accounts";
@@ -42,6 +42,8 @@ const Login: React.FC = () => {
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
   const [enrollEmail, setEnrollEmail] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -327,9 +329,21 @@ const Login: React.FC = () => {
       const data = await res.json();
       if (res.ok && data.success) {
         toast({ title: 'Password updated', description: 'You can now sign in with your new password.' });
+        // Refresh accounts from server so new password is used for immediate login
+        try {
+          const getRes = await fetch(ACCOUNTS_API);
+          const getData = await getRes.json();
+          setAccounts(Array.isArray(getData.accounts) ? getData.accounts : []);
+        } catch {
+          // If refresh fails, at least update local state
+          setAccounts(prev => prev.map(a => a.email.toLowerCase() === email.toLowerCase() ? { ...a, password: newPassword } : a));
+        }
+        // Pre-fill password field with new password for convenience
+        setPassword(newPassword);
         setForgotMode(false);
         setNewPassword('');
         setOtp('');
+        setLoginStep('password');
       } else {
         toast({ title: 'Reset failed', description: data.error || 'Invalid OTP.', variant: 'destructive' });
       }
@@ -441,7 +455,12 @@ const Login: React.FC = () => {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
-                <Input ref={passwordInputRef} id="password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <div className="relative">
+                  <Input ref={passwordInputRef} id="password" type={showPassword ? 'text' : 'password'} required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(s => !s)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
                 <p className="text-xs text-muted-foreground">
                   Password must be 8+ chars and include letters, numbers, and symbols.
                 </p>
@@ -476,14 +495,24 @@ const Login: React.FC = () => {
               {loginStep === 'password' && !forgotMode && (
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input ref={passwordInputRef} id="password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <div className="relative">
+                    <Input ref={passwordInputRef} id="password" type={showPassword ? 'text' : 'password'} required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(s => !s)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                 </div>
               )}
 
               {loginStep === 'otp' && (
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
-                  <Input ref={passwordInputRef} id="password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                  <div className="relative">
+                    <Input ref={passwordInputRef} id="password" type={showPassword ? 'text' : 'password'} required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowPassword(s => !s)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
+                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
 
                   <Label htmlFor="otp">One-Time Password</Label>
                   <div className="flex gap-2">
@@ -506,7 +535,12 @@ const Login: React.FC = () => {
                     </Button>
                   </div>
                   <Label htmlFor="newPassword">New Password</Label>
-                  <Input id="newPassword" type="password" placeholder="New password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                  <div className="relative">
+                    <Input id="newPassword" type={showNewPassword ? 'text' : 'password'} placeholder="New password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                    <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" onClick={() => setShowNewPassword(s => !s)} aria-label={showNewPassword ? 'Hide password' : 'Show password'}>
+                      {showNewPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
                   <p className="text-xs text-muted-foreground">Enter OTP and a strong new password, then press Reset Password.</p>
                 </div>
               )}

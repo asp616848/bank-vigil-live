@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -11,14 +11,6 @@ import { useSearch } from "@/hooks/useSearch";
 import { useNavigate } from "react-router-dom";
 
 type Row = { date: string; description: string; amount: number };
-
-const base: Row[] = [
-	{ date: "2025-07-28", description: "UPI: Coffee shop", amount: -180 },
-	{ date: "2025-07-29", description: "UPI: Food delivery", amount: -620 },
-	{ date: "2025-08-01", description: "Salary credit", amount: 85000 },
-	{ date: "2025-08-03", description: "Electricity bill", amount: -2140 },
-	{ date: "2025-08-05", description: "Movie tickets", amount: -780 },
-];
 
 function toCSV(rows: Row[]) {
 	const header = ["Date", "Description", "Amount"].join(",");
@@ -35,8 +27,27 @@ const Statements: React.FC = () => {
 	const { query } = useSearch();
 	const navigate = useNavigate();
 
+	const [all, setAll] = useState<Row[]>([]);
+	useEffect(() => {
+		let active = true;
+		fetch("/transactions.json")
+			.then((r) => r.json())
+			.then((data: Row[]) => {
+				if (!active) return;
+				const cleaned = (Array.isArray(data) ? data : []).filter(
+					(d): d is Row =>
+						!!d && typeof d.date === "string" && typeof d.description === "string" && typeof d.amount === "number"
+				);
+				setAll(cleaned);
+			})
+			.catch(() => setAll([]));
+		return () => {
+			active = false;
+		};
+	}, []);
+
 	const rows = useMemo(() => {
-		const filtered = base.filter((r) => {
+		const filtered = all.filter((r) => {
 			const d = new Date(r.date + "T00:00:00");
 			if (fromDate && d < new Date(fromDate.toDateString())) return false;
 			if (toDate && d > new Date(toDate.toDateString())) return false;
@@ -57,7 +68,7 @@ const Statements: React.FC = () => {
 			if (typeof x === "number" && typeof y === "number") return (x - y) * dir;
 			return ("" + x).localeCompare("" + y) * dir;
 		});
-	}, [sortKey, asc, fromDate, toDate, type, query]);
+	}, [all, sortKey, asc, fromDate, toDate, type, query]);
 
 	const downloadCSV = () => {
 		const blob = new Blob([toCSV(rows)], { type: "text/csv;charset=utf-8;" });

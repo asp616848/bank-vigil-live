@@ -37,6 +37,7 @@ const Login: React.FC = () => {
   const [otpSent, setOtpSent] = useState(false);
   const [forgotMode, setForgotMode] = useState(false);
   const [newPassword, setNewPassword] = useState("");
+  const [otpCooldown, setOtpCooldown] = useState(0); // seconds remaining to resend
   const tdnaRef = useRef<any>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const emailInputRef = useRef<HTMLInputElement>(null);
@@ -64,6 +65,10 @@ const Login: React.FC = () => {
     setIsEmailLocked(false);
     if (!opts?.preservePassword) setPassword("");
     setOtp("");
+    setOtpSent(false);
+    setOtpCooldown(0);
+    setForgotMode(false);
+    setNewPassword("");
   };
 
   useEffect(() => {
@@ -284,6 +289,7 @@ const Login: React.FC = () => {
   };
 
   const sendOtp = async () => {
+    if (otpCooldown > 0) return; // cooldown active
     setLoading(true);
     try {
       const res = await fetch('http://localhost:5000/otp/send', {
@@ -294,6 +300,7 @@ const Login: React.FC = () => {
       const data = await res.json();
       if (res.ok && data.success) {
         setOtpSent(true);
+        setOtpCooldown(30);
         toast({ title: 'OTP sent', description: 'Check your email for the 6-digit code.' });
       } else {
         toast({ title: 'Failed to send OTP', description: data.error || 'Please try again later.', variant: 'destructive' });
@@ -447,7 +454,26 @@ const Login: React.FC = () => {
                 <Input id="email" type="email" required placeholder="you@bank.com" value={email} onChange={(e) => setEmail(e.target.value)} disabled={isEmailLocked} />
               </div>
 
-              {loginStep === 'password' && (
+              {/* Always show Forgot Password link on login screens */}
+              <div className="-mt-2 mb-2 text-right text-xs">
+                <button
+                  type="button"
+                  className="underline text-primary"
+                  onClick={() => {
+                    setForgotMode(true);
+                    setLoginStep('password');
+                    setIsEmailLocked(!!email);
+                    setOtp('');
+                    setNewPassword('');
+                    setOtpSent(false);
+                    setOtpCooldown(0);
+                  }}
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              {loginStep === 'password' && !forgotMode && (
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <Input ref={passwordInputRef} id="password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
@@ -456,14 +482,17 @@ const Login: React.FC = () => {
 
               {loginStep === 'otp' && (
                 <div className="space-y-2">
+                  <Label htmlFor="password">Password</Label>
+                  <Input ref={passwordInputRef} id="password" type="password" required placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} />
+
                   <Label htmlFor="otp">One-Time Password</Label>
                   <div className="flex gap-2">
                     <Input id="otp" required placeholder="123456" value={otp} onChange={(e) => setOtp(e.target.value)} />
-                    <Button type="button" variant="secondary" onClick={sendOtp} disabled={loading || otpSent}>
-                      {otpSent ? 'OTP Sent' : 'Send OTP'}
+                    <Button type="button" variant="secondary" onClick={sendOtp} disabled={loading || otpCooldown > 0}>
+                      {otpCooldown > 0 ? `Resend in ${otpCooldown}s` : (otpSent ? 'Resend OTP' : 'Send OTP')}
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Enter the 6-digit code sent to your email.</p>
+                  <p className="text-xs text-muted-foreground">Enter both your password and the 6-digit code sent to your email.</p>
                 </div>
               )}
 
@@ -472,20 +501,24 @@ const Login: React.FC = () => {
                   <Label htmlFor="otp">OTP</Label>
                   <div className="flex gap-2">
                     <Input id="otp" placeholder="123456" value={otp} onChange={(e) => setOtp(e.target.value)} />
-                    <Button type="button" variant="secondary" onClick={sendOtp} disabled={loading || otpSent}>
-                      {otpSent ? 'OTP Sent' : 'Send OTP'}
+                    <Button type="button" variant="secondary" onClick={sendOtp} disabled={loading || otpCooldown > 0}>
+                      {otpCooldown > 0 ? `Resend in ${otpCooldown}s` : (otpSent ? 'Resend OTP' : 'Send OTP')}
                     </Button>
                   </div>
                   <Label htmlFor="newPassword">New Password</Label>
                   <Input id="newPassword" type="password" placeholder="New password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                  <p className="text-xs text-muted-foreground">Enter OTP and a strong new password, then press Sign In to update.</p>
+                  <p className="text-xs text-muted-foreground">Enter OTP and a strong new password, then press Reset Password.</p>
                 </div>
               )}
             </>
           )}
           
           <Button disabled={loading || !isTypingDNAReady} type="submit" className="w-full hover-scale">
-            {loading ? <Loader2 className="animate-spin" /> : (mode === "login" ? (loginStep === 'email' ? 'Verify Email' : 'Sign In') : "Proceed to Biometric Setup")}
+            {loading ? <Loader2 className="animate-spin" /> : (
+              mode === "login"
+                ? (loginStep === 'email' ? 'Verify Email' : (forgotMode && loginStep === 'password' ? 'Reset Password' : 'Sign In'))
+                : "Proceed to Biometric Setup"
+            )}
             {!isTypingDNAReady && " (Initializing...)"}
           </Button>
         </form>

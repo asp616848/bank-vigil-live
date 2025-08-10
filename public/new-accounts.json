@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "email": "kong01@gmail.com",
+    "password": "kong01@23",
+    "name": "king kong",
+    "username": "king"
+  },
+  {
+    "email": "abhijeet.s.ug23@plaksha.edu.in",
+    "password": "abhi@6168",
+    "name": "abhijee",
+    "username": "asp"
+  }
+]

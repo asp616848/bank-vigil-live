@@ -14,6 +14,7 @@ import { Banknote, ChevronDown, LogOut, Moon, Sun, User, Bell, Search as SearchI
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useSearch } from "@/hooks/useSearch";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import HoneypotGuard from "@/components/HoneypotGuard";
 
 export const TopBar: React.FC = () => {
   const [theme, setTheme] = useState<string>(() => localStorage.getItem("theme") || "light");
@@ -76,8 +77,45 @@ export const TopBar: React.FC = () => {
 
   return (
     <>
+      <HoneypotGuard />
       <header className="sticky top-0 z-20 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto flex items-center gap-3 h-14 px-3">
+          {/* Honeypot traps: hidden inputs + link (display:none) */}
+          <div style={{ display: 'none' }} aria-hidden>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const input = e.currentTarget.querySelector('input[name="middle_name"]') as HTMLInputElement | null;
+              const name = input?.value || "(blank)";
+              window.dispatchEvent(new CustomEvent('honeypot-trigger', { detail: { source: 'form-submit', name: `middle_name=${name}` } }));
+            }}>
+              <label title="Middle Name">
+                Middle Name
+                <input
+                  type="text"
+                  name="middle_name"
+                  autoComplete="off"
+                  tabIndex={-1}
+                  defaultValue=""
+                  onChange={(e) => {
+                    window.dispatchEvent(new CustomEvent('honeypot-trigger', { detail: { source: 'input-change', name: `middle_name=${e.currentTarget.value}` } }));
+                  }}
+                />
+              </label>
+              <button type="submit" tabIndex={-1}>Submit</button>
+            </form>
+            <a
+              href="#"
+              title="Names"
+              tabIndex={-1}
+              onClick={(e) => {
+                e.preventDefault();
+                window.dispatchEvent(new CustomEvent('honeypot-trigger', { detail: { source: 'link-click', name: 'names-link' } }));
+              }}
+            >
+              Names
+            </a>
+          </div>
+
           {/* Brand */}
           <button
             type="button"

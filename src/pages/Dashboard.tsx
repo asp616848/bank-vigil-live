@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 import { useSearch } from "@/hooks/useSearch";
 import FingerprintDisplay from "@/components/FingerprintDisplay";
+import BotDetector from "@/components/BotDetector";
 
 function currency(n: number) {
   return n.toLocaleString("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
@@ -62,6 +63,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <BotDetector />
       <header>
         <h1 className="text-xl font-semibold">Home Dashboard</h1>
       </header>

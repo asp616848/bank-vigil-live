@@ -68,7 +68,7 @@ def accounts():
     if request.method == "GET":
         accounts = _load_all_accounts()
         return jsonify({"accounts": accounts})
-
+    
     # POST -> create new account in new-accounts.json if not existing in either file
     data = request.get_json(force=True, silent=True) or {}
     required = ["email", "password", "name", "username"]

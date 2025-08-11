@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useFingerprint } from "@/hooks/useFingerprint";
+import BotDetector from "@/components/BotDetector";
 
 // Replace direct JSON access with backend API endpoints
 const ACCOUNTS_API = "http://localhost:5000/accounts";
@@ -610,6 +611,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="relative min-h-screen grid place-items-center overflow-hidden">
+      <BotDetector />
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}

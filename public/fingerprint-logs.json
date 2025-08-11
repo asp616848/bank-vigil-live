@@ -112,5 +112,43 @@
     },
     "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
     "client_timestamp": "2025-08-11T13:11:52.189Z"
+  },
+  {
+    "timestamp": "2025-08-11T13:43:55.295221",
+    "action": "email_verification_attempt",
+    "email": "",
+    "fingerprint": {
+      "visitorId": "pBhRFjLoDveykTL8n0Mk",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "HeadlessChrome",
+        "browserVersion": "129.0.6668",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1754919835075.dFpjSa",
+      "timestamp": 1754919835140
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/129.0.6668.29 Safari/537.36",
+    "client_timestamp": "2025-08-11T13:43:55.287Z"
+  },
+  {
+    "timestamp": "2025-08-11T13:43:55.308641",
+    "action": "login_attempt_failed_email_not_found",
+    "email": "",
+    "fingerprint": {
+      "visitorId": "pBhRFjLoDveykTL8n0Mk",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "HeadlessChrome",
+        "browserVersion": "129.0.6668",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1754919835075.dFpjSa",
+      "timestamp": 1754919835140
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/129.0.6668.29 Safari/537.36",
+    "client_timestamp": "2025-08-11T13:43:55.306Z"
   }
 ]

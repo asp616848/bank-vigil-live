@@ -77,7 +77,6 @@ def create_and_send_otp(email: str) -> None:
     _save_store(store)
     send_email_otp(email, otp)
 
-
 def verify_otp(email: str, otp: str) -> bool:
     store = _load_store()
     entry = store.get(email.lower())

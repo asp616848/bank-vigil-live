@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from "react-router-dom";
+import { FpjsProvider } from '@fingerprintjs/fingerprintjs-pro-react';
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AppLayout from "./components/layout/AppLayout";
@@ -14,6 +15,7 @@ import PayBill from "./pages/PayBill";
 import Transfers from "./pages/Transfers";
 import Cards from "./pages/Cards";
 import ProfileSecurity from "./pages/ProfileSecurity";
+import SecurityLogs from "./pages/SecurityLogs";
 import { SecuritySettingsProvider } from "@/hooks/useSecuritySettings";
 import { SearchProvider } from "@/hooks/useSearch";
 import TypingDNAForm from "./pages/Typingdna";
@@ -36,35 +38,43 @@ const RequireAuth: React.FC = () => {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      {/* Provide global security settings and search state */}
-      <SecuritySettingsProvider>
-        <SearchProvider>
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route element={<RequireAuth />}>
-                <Route path="/app" element={<AppLayout />}>
-                  <Route path="dashboard" element={<Dashboard />} />
-                  <Route path="payments" element={<Payments />} />
-                  <Route path="pay-bill" element={<PayBill />} />
-                  <Route path="transfers" element={<Transfers />} />
-                  <Route path="statements" element={<Statements />} />
-                  <Route path="cards" element={<Cards />} />
-                  <Route path="profile-security" element={<ProfileSecurity />} />
-                  <Route path="dnaform" element={<TypingDNAForm />} />
-                  <Route path="settings" element={<Settings />} />
+    <FpjsProvider
+      loadOptions={{
+        apiKey: "a8wE09Hz9apq7oAHkM1B",
+        region: "ap"
+      }}
+    >
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        {/* Provide global security settings and search state */}
+        <SecuritySettingsProvider>
+          <SearchProvider>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Login />} />
+                <Route element={<RequireAuth />}>
+                  <Route path="/app" element={<AppLayout />}>
+                    <Route path="dashboard" element={<Dashboard />} />
+                    <Route path="payments" element={<Payments />} />
+                    <Route path="pay-bill" element={<PayBill />} />
+                    <Route path="transfers" element={<Transfers />} />
+                    <Route path="statements" element={<Statements />} />
+                    <Route path="cards" element={<Cards />} />
+                    <Route path="profile-security" element={<ProfileSecurity />} />
+                    <Route path="security-logs" element={<SecurityLogs />} />
+                    <Route path="dnaform" element={<TypingDNAForm />} />
+                    <Route path="settings" element={<Settings />} />
+                  </Route>
                 </Route>
-              </Route>
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </SearchProvider>
-      </SecuritySettingsProvider>
-    </TooltipProvider>
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </SearchProvider>
+        </SecuritySettingsProvider>
+      </TooltipProvider>
+    </FpjsProvider>
   </QueryClientProvider>
 );
 

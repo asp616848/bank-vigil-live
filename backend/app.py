@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from requests.auth import HTTPBasicAuth
 import json
 from pathlib import Path
+from datetime import datetime
 
 # Import OTP helpers
 from otp_service import create_and_send_otp, verify_otp
@@ -22,6 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent
 PUBLIC_DIR = (BASE_DIR / ".." / "public").resolve()
 OLD_ACCOUNTS_PATH = PUBLIC_DIR / "old-accounts.json"
 NEW_ACCOUNTS_PATH = PUBLIC_DIR / "new-accounts.json"
+FINGERPRINT_LOGS_PATH = PUBLIC_DIR / "fingerprint-logs.json"
 
 def _read_accounts_file(path: Path):
     try:
@@ -211,6 +213,82 @@ def reset_password():
         return jsonify({"error": "Account not found"}), 404
 
     return jsonify({"success": True})
+
+@app.route('/security/log-fingerprint', methods=['POST'])
+def log_fingerprint():
+    """Log fingerprint data for security monitoring"""
+    try:
+        data = request.get_json(force=True, silent=True) or {}
+        
+        # Validate required fields
+        if not data.get('action') or not data.get('fingerprint'):
+            return jsonify({"error": "Missing required fields"}), 400
+        
+        # Add server timestamp
+        log_entry = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "action": data.get('action'),
+            "email": data.get('email'),
+            "fingerprint": data.get('fingerprint'),
+            "user_agent": data.get('userAgent'),
+            "client_timestamp": data.get('timestamp')
+        }
+        
+        # Read existing logs
+        logs = []
+        if FINGERPRINT_LOGS_PATH.exists():
+            try:
+                with FINGERPRINT_LOGS_PATH.open("r", encoding="utf-8") as f:
+                    logs = json.load(f)
+            except Exception:
+                logs = []
+        
+        # Append new log entry
+        logs.append(log_entry)
+        
+        # Keep only last 1000 entries to prevent file from growing too large
+        if len(logs) > 1000:
+            logs = logs[-1000:]
+        
+        # Write back to file
+        FINGERPRINT_LOGS_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with FINGERPRINT_LOGS_PATH.open("w", encoding="utf-8") as f:
+            json.dump(logs, f, ensure_ascii=False, indent=2)
+        
+        return jsonify({"success": True})
+    
+    except Exception as e:
+        print(f"Error logging fingerprint: {e}")
+        return jsonify({"error": "Failed to log fingerprint"}), 500
+
+@app.route('/security/fingerprint-logs', methods=['GET'])
+def get_fingerprint_logs():
+    """Get fingerprint logs for security analysis"""
+    try:
+        if not FINGERPRINT_LOGS_PATH.exists():
+            return jsonify({"logs": []})
+        
+        with FINGERPRINT_LOGS_PATH.open("r", encoding="utf-8") as f:
+            logs = json.load(f)
+        
+        # Optional: filter by email or action
+        email_filter = request.args.get('email')
+        action_filter = request.args.get('action')
+        
+        if email_filter:
+            logs = [log for log in logs if log.get('email', '').lower() == email_filter.lower()]
+        
+        if action_filter:
+            logs = [log for log in logs if log.get('action') == action_filter]
+        
+        # Return most recent first
+        logs.reverse()
+        
+        return jsonify({"logs": logs[:100]})  # Return last 100 entries
+    
+    except Exception as e:
+        print(f"Error retrieving fingerprint logs: {e}")
+        return jsonify({"error": "Failed to retrieve logs"}), 500
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)

@@ -6,6 +6,7 @@ import { ArrowDownRight, ArrowUpRight, CreditCard, FileText, Send } from "lucide
 import { useNavigate } from "react-router-dom";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 import { useSearch } from "@/hooks/useSearch";
+import FingerprintDisplay from "@/components/FingerprintDisplay";
 
 function currency(n: number) {
   return n.toLocaleString("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
@@ -157,6 +158,11 @@ const Dashboard: React.FC = () => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-semibold mb-3">Security & Device Information</h2>
+        <FingerprintDisplay />
       </section>
     </div>
   );

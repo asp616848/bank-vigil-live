@@ -150,5 +150,746 @@
     },
     "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/129.0.6668.29 Safari/537.36",
     "client_timestamp": "2025-08-11T13:43:55.306Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:20:42.169399",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922032630.hxkohX",
+      "timestamp": 1754922032718
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:20:42.161Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:20:44.229563",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922032630.hxkohX",
+      "timestamp": 1754922032718
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:20:44.228Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:21:26.349440",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922032630.hxkohX",
+      "timestamp": 1754922032718
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:21:26.343Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:21:42.220110",
+    "action": "email_verification_attempt",
+    "email": "human_test_754@local.test",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922097635.FyOrBj",
+      "timestamp": 1754922097720
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:21:42.212Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:21:42.226021",
+    "action": "login_attempt_failed_email_not_found",
+    "email": "human_test_754@local.test",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922097635.FyOrBj",
+      "timestamp": 1754922097720
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:21:42.223Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:31:17.240642",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922671947.gqpzCa",
+      "timestamp": 1754922672042
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:31:17.233Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:31:19.383401",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922671947.gqpzCa",
+      "timestamp": 1754922672042
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:31:19.379Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:31:39.190655",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922671947.gqpzCa",
+      "timestamp": 1754922672042
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:31:39.185Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:32:17.902838",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922671947.gqpzCa",
+      "timestamp": 1754922703938
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:32:17.896Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:32:54.227143",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922671947.gqpzCa",
+      "timestamp": 1754922740219
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:32:54.222Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:33:36.648877",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922671947.gqpzCa",
+      "timestamp": 1754922776033
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:33:36.641Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:34:21.039173",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922671947.gqpzCa",
+      "timestamp": 1754922819016
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:34:21.035Z"
+  },
+  {
+    "timestamp": "2025-08-11T14:35:08.486945",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754922671947.gqpzCa",
+      "timestamp": 1754922867615
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T14:35:08.481Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:26:35.820831",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754925990655.34o5bY",
+      "timestamp": 1754925990738
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:26:35.812Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:26:37.998831",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754925990655.34o5bY",
+      "timestamp": 1754925990738
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:26:37.995Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:26:55.759291",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754925990655.34o5bY",
+      "timestamp": 1754925990738
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:26:55.753Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:27:37.790533",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754925990655.34o5bY",
+      "timestamp": 1754926023456
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:27:37.783Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:28:15.966934",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754925990655.34o5bY",
+      "timestamp": 1754926060360
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:28:15.959Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:28:59.220327",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754925990655.34o5bY",
+      "timestamp": 1754926099714
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:28:59.216Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:29:35.516176",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754925990655.34o5bY",
+      "timestamp": 1754926141700
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:29:35.510Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:30:19.786053",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754925990655.34o5bY",
+      "timestamp": 1754926179197
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:30:19.779Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:30:55.877462",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754925990655.34o5bY",
+      "timestamp": 1754926222081
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:30:55.873Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:59:36.666156",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754927967191.wv2jYR",
+      "timestamp": 1754927967350
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:59:36.650Z"
+  },
+  {
+    "timestamp": "2025-08-11T15:59:38.742791",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754927967191.wv2jYR",
+      "timestamp": 1754927967350
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T15:59:38.739Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:00:08.046244",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754927967191.wv2jYR",
+      "timestamp": 1754927967350
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:00:08.039Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:00:31.725805",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928028202.Fbx6pe",
+      "timestamp": 1754928028287
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:00:31.717Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:00:33.324834",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928028202.Fbx6pe",
+      "timestamp": 1754928028287
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:00:33.322Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:01:31.144695",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928069028.jGINS9",
+      "timestamp": 1754928069107
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:01:31.137Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:01:32.754906",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928069028.jGINS9",
+      "timestamp": 1754928069107
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:01:32.751Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:05:16.516377",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928069028.jGINS9",
+      "timestamp": 1754928069107
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:05:16.509Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:05:53.197747",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928069028.jGINS9",
+      "timestamp": 1754928318403
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:05:53.194Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:06:29.436116",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928069028.jGINS9",
+      "timestamp": 1754928354575
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:06:29.430Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:07:12.453979",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928069028.jGINS9",
+      "timestamp": 1754928391417
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:07:12.450Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:07:53.367422",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928069028.jGINS9",
+      "timestamp": 1754928434147
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:07:53.363Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:12:19.801894",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "138.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1754928677817.Q3OCPC",
+      "timestamp": 1754928729666
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:12:19.796Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:12:21.880948",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "138.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1754928677817.Q3OCPC",
+      "timestamp": 1754928729666
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:12:21.876Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:12:38.025997",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928752680.Pbx1Go",
+      "timestamp": 1754928752765
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:12:38.019Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:12:39.600682",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928752680.Pbx1Go",
+      "timestamp": 1754928752765
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:12:39.597Z"
+  },
+  {
+    "timestamp": "2025-08-11T16:13:00.066080",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "M6480cceFtNGS9AiySMX",
+      "confidence": 0.98,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1754928752680.Pbx1Go",
+      "timestamp": 1754928752765
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-11T16:13:00.059Z"
   }
 ]

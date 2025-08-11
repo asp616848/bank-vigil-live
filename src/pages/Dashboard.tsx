@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -8,6 +8,8 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "rec
 import { useSearch } from "@/hooks/useSearch";
 import FingerprintDisplay from "@/components/FingerprintDisplay";
 import BotDetector from "@/components/BotDetector";
+import { useFingerprint } from "@/hooks/useFingerprint";
+import { toast } from "@/hooks/use-toast";
 
 function currency(n: number) {
   return n.toLocaleString("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
@@ -16,6 +18,19 @@ function currency(n: number) {
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { query } = useSearch();
+  const { fingerprintData } = useFingerprint();
+  const warnedRef = useRef(false);
+
+  useEffect(() => {
+    if (!warnedRef.current && fingerprintData && fingerprintData.confidence < 0.99) {
+      warnedRef.current = true;
+      toast({
+        title: "Automation suspected",
+        description: "Mouse pointer controlled by bot.",
+        variant: "destructive",
+      });
+    }
+  }, [fingerprintData]);
 
   const [transactions, setTransactions] = useState<{ id: number; type: string; desc: string; amount: number; date: string }[]>([]);
   useEffect(() => {

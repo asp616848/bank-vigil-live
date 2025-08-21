@@ -8,6 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { useSecuritySettings } from "@/hooks/useSecuritySettings";
 import { motion } from "framer-motion";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { registerPlatformPasskey, isPlatformAuthenticatorAvailable } from "@/hooks/useWebAuthn";
 
 const ProfileSecurity: React.FC = () => {
   const { features, setFeature, safetyScore } = useSecuritySettings();
@@ -19,10 +20,23 @@ const ProfileSecurity: React.FC = () => {
   const [otp, setOtp] = useState<string>("");
   const [otpSent, setOtpSent] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-  const existingPhone = user?.phone as string | undefined;
+  const [existingPhone, setExistingPhone] = useState<string | undefined>(() => user?.phone as string | undefined);
+  const [isEditingPhone, setIsEditingPhone] = useState<boolean>(false);
 
   useEffect(() => {
     document.title = "Profile & Security — Bank of India";
+  }, []);
+
+  // Passkey (WebAuthn) status for current origin
+  const rpId = typeof window !== 'undefined' ? window.location.hostname : 'localhost';
+  const passkeyKey = user?.email ? `passkey:${user.email}:${rpId}` : undefined;
+  const [hasPasskey, setHasPasskey] = useState<boolean>(() => {
+    if (!passkeyKey) return false;
+    try { return localStorage.getItem(passkeyKey) === '1'; } catch { return false; }
+  });
+  const [webauthnSupported, setWebauthnSupported] = useState<boolean>(false);
+  useEffect(() => {
+    (async () => setWebauthnSupported(await isPlatformAuthenticatorAvailable()))();
   }, []);
 
   const handleSave = (e: React.FormEvent) => {
@@ -42,6 +56,10 @@ const ProfileSecurity: React.FC = () => {
   const sendPhoneOtp = async () => {
     if (!user?.email) {
       toast({ title: "Sign in required", description: "Please sign in again.", variant: "destructive" });
+      return;
+    }
+    if (!isEditingPhone && existingPhone) {
+      toast({ title: "Phone already linked", description: existingPhone });
       return;
     }
     const e164 = toE164(countryCode, phoneLocal);
@@ -87,9 +105,11 @@ const ProfileSecurity: React.FC = () => {
         // Persist in sessionStorage currentUser as well
         const updated = { ...user, phone: data.phone };
         sessionStorage.setItem("currentUser", JSON.stringify(updated));
+        setExistingPhone(data.phone);
         toast({ title: "Phone linked", description: `Linked ${data.phone}.` });
         setOtp("");
         setOtpSent(false);
+        setIsEditingPhone(false);
       } else {
         toast({ title: "Invalid OTP", description: data.error || "Try again.", variant: "destructive" });
       }
@@ -97,6 +117,28 @@ const ProfileSecurity: React.FC = () => {
       toast({ title: "Error", description: e.message || "Could not verify OTP.", variant: "destructive" });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createPasskey = async () => {
+    if (!user?.email) {
+      toast({ title: "Sign in required", description: "Please sign in again.", variant: "destructive" });
+      return;
+    }
+    if (!webauthnSupported) {
+      toast({ title: "Not supported", description: "This device doesn't support platform passkeys.", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    const res = await registerPlatformPasskey({ id: user.email, name: user.email, displayName: user.name || user.username || user.email });
+    setLoading(false);
+    if (res.ok) {
+      try { if (passkeyKey) localStorage.setItem(passkeyKey, '1'); } catch {}
+      setHasPasskey(true);
+      toast({ title: "Passkey created", description: `Passkey bound to ${rpId}.` });
+    } else {
+      const err = (res as any).error as string | undefined;
+      toast({ title: "Failed", description: err || "Could not create passkey.", variant: "destructive" });
     }
   };
 
@@ -145,31 +187,45 @@ const ProfileSecurity: React.FC = () => {
             </div>
             <div className="space-y-2 md:col-span-2">
               <Label>Phone</Label>
-              <div className="flex gap-2">
-                <Select value={countryCode} onValueChange={setCountryCode}>
-                  <SelectTrigger className="w-28">
-                    <SelectValue placeholder="Code" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="+1">+1 (US)</SelectItem>
-                    <SelectItem value="+44">+44 (UK)</SelectItem>
-                    <SelectItem value="+61">+61 (AU)</SelectItem>
-                    <SelectItem value="+81">+81 (JP)</SelectItem>
-                    <SelectItem value="+91">+91 (IN)</SelectItem>
-                    <SelectItem value="+971">+971 (AE)</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Input value={phoneLocal} onChange={(e) => setPhoneLocal(e.target.value)} placeholder={existingPhone || "Phone number"} />
-                <Button type="button" variant="secondary" onClick={sendPhoneOtp} disabled={loading}>Send OTP</Button>
-              </div>
-              {otpSent && (
-                <div className="mt-2 flex gap-2">
-                  <Input value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="Enter OTP" />
-                  <Button type="button" onClick={verifyPhoneOtp} disabled={loading}>Verify</Button>
+              {!isEditingPhone && existingPhone ? (
+                <div className="flex items-center gap-3">
+                  <Input value={existingPhone} readOnly className="bg-muted/50" />
+                  <Button type="button" variant="secondary" onClick={() => { setIsEditingPhone(true); setOtpSent(false); setOtp(""); setPhoneLocal(""); }}>Change</Button>
                 </div>
-              )}
-              {existingPhone && (
-                <p className="text-xs text-muted-foreground">Linked: {existingPhone}</p>
+              ) : (
+                <>
+                  <div className="flex gap-2">
+                    <Select value={countryCode} onValueChange={setCountryCode}>
+                      <SelectTrigger className="w-28">
+                        <SelectValue placeholder="Code" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="+1">+1 (US)</SelectItem>
+                        <SelectItem value="+44">+44 (UK)</SelectItem>
+                        <SelectItem value="+61">+61 (AU)</SelectItem>
+                        <SelectItem value="+81">+81 (JP)</SelectItem>
+                        <SelectItem value="+91">+91 (IN)</SelectItem>
+                        <SelectItem value="+971">+971 (AE)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input value={phoneLocal} onChange={(e) => setPhoneLocal(e.target.value)} placeholder={existingPhone || "Phone number"} />
+                    <Button type="button" variant="secondary" onClick={sendPhoneOtp} disabled={loading}>Send OTP</Button>
+                  </div>
+                  {otpSent && (
+                    <div className="mt-2 flex gap-2">
+                      <Input value={otp} onChange={(e) => setOtp(e.target.value)} placeholder="Enter OTP" />
+                      <Button type="button" onClick={verifyPhoneOtp} disabled={loading}>Verify</Button>
+                      {existingPhone && (
+                        <Button type="button" variant="ghost" onClick={() => { setIsEditingPhone(false); setOtpSent(false); setOtp(""); }}>Cancel</Button>
+                      )}
+                    </div>
+                  )}
+                  {!otpSent && existingPhone && (
+                    <div className="mt-1">
+                      <Button type="button" variant="ghost" onClick={() => { setIsEditingPhone(false); setPhoneLocal(""); }}>Cancel</Button>
+                    </div>
+                  )}
+                </>
               )}
             </div>
             <div className="md:col-span-2 flex items-center justify-between rounded-md border p-3">
@@ -178,6 +234,18 @@ const ProfileSecurity: React.FC = () => {
                 <div className="text-xs text-muted-foreground">Use biometrics when high risk is detected.</div>
               </div>
               <Switch checked={features.biometric} onCheckedChange={(v) => setFeature("biometric", v)} />
+            </div>
+
+            <div className="md:col-span-2 flex items-center justify-between rounded-md border p-3">
+              <div>
+                <div className="text-sm font-medium">Passkey for this device</div>
+                <div className="text-xs text-muted-foreground">
+                  {hasPasskey ? `Passkey is set up for ${rpId}.` : (webauthnSupported ? `No passkey found for ${rpId}.` : 'Passkeys not supported on this device.')}
+                </div>
+              </div>
+              <Button type="button" onClick={createPasskey} disabled={loading || !webauthnSupported} variant={hasPasskey ? 'secondary' : 'default'}>
+                {hasPasskey ? 'Re-create' : 'Create Passkey'}
+              </Button>
             </div>
             <div className="md:col-span-2">
               <Button type="submit" className="hover-scale">Save Changes</Button>

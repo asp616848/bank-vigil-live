@@ -388,13 +388,14 @@ const Login: React.FC = () => {
     }
 
     if (loginStep === 'password' && !forgotMode) {
-      if (password === found.password) {
+    if (password === found.password) {
         await logFingerprintForSecurity('login_success', email);
         sessionStorage.setItem("currentUser", JSON.stringify({ 
           email: found.email, 
           name: found.name, 
           username: found.username,
-          fingerprintId: fingerprintData?.visitorId 
+      fingerprintId: fingerprintData?.visitorId,
+      phone: (found as any).phone
         }));
         toast({ title: "Welcome back!", description: `Signed in as ${found.name}` });
         setTimeout(() => navigate("/app/dashboard"), 400);
@@ -416,13 +417,14 @@ const Login: React.FC = () => {
           body: JSON.stringify({ email, otp }),
         });
         const data = await res.json();
-        if (res.ok && data.valid && password === found.password) {
+    if (res.ok && data.valid && password === found.password) {
           await logFingerprintForSecurity('login_success_via_otp', email);
           sessionStorage.setItem("currentUser", JSON.stringify({ 
             email: found.email, 
             name: found.name, 
             username: found.username,
-            fingerprintId: fingerprintData?.visitorId 
+      fingerprintId: fingerprintData?.visitorId,
+      phone: (found as any).phone
           }));
           toast({ title: "Welcome back!", description: `Signed in via OTP as ${found.name}` });
           setTimeout(() => navigate("/app/dashboard"), 400);

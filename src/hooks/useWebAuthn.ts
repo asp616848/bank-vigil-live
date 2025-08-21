@@ -83,3 +83,46 @@ export async function authenticateWithPlatform(): Promise<WebAuthnResult> {
     return { ok: false, error: e?.message || 'Authentication failed' };
   }
 }
+
+// Registration (Passkey creation) — demo-only client-side generator
+export type RegistrationResult = { ok: true; credentialId: string } | { ok: false; error: string };
+
+function strToUtf8Bytes(str: string): Uint8Array {
+  return new TextEncoder().encode(str);
+}
+
+export async function registerPlatformPasskey(user: { id: string; name: string; displayName: string }): Promise<RegistrationResult> {
+  try {
+    if (!('credentials' in navigator) || !(window as any).PublicKeyCredential) {
+      return { ok: false, error: 'WebAuthn not supported' };
+    }
+    const rpId = window.location.hostname; // e.g., localhost or your-ngrok-subdomain.ngrok-free.app
+    const publicKey: PublicKeyCredentialCreationOptions = {
+      challenge: randomChallenge(),
+      rp: { name: 'Bank of India Demo', id: rpId },
+      user: {
+        id: strToUtf8Bytes(user.id),
+        name: user.name,
+        displayName: user.displayName,
+      },
+      pubKeyCredParams: [
+        { type: 'public-key', alg: -7 },   // ES256
+        { type: 'public-key', alg: -257 }, // RS256
+      ],
+      authenticatorSelection: {
+        authenticatorAttachment: 'platform',
+        residentKey: 'preferred',
+        userVerification: 'required',
+      },
+      timeout: 60_000,
+      attestation: 'none',
+    } as any;
+
+    const cred = (await navigator.credentials.create({ publicKey })) as PublicKeyCredential | null;
+    if (!cred) return { ok: false, error: 'User cancelled' };
+    const id = cred.id;
+    return { ok: true, credentialId: id };
+  } catch (e: any) {
+    return { ok: false, error: e?.message || 'Registration failed' };
+  }
+}

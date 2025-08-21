@@ -948,5 +948,119 @@
     },
     "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
     "client_timestamp": "2025-08-21T14:30:31.570Z"
+  },
+  {
+    "timestamp": "2025-08-21T18:07:21.704692",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "U7vfXZ2N2p067WasoZ00",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome Mobile",
+        "browserVersion": "139.0.0",
+        "os": "Android",
+        "osVersion": "10"
+      },
+      "requestId": "1755799567257.1i44Ij",
+      "timestamp": 1755799639475
+    },
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+    "client_timestamp": "2025-08-21T18:07:21.474Z"
+  },
+  {
+    "timestamp": "2025-08-21T18:07:23.836595",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "U7vfXZ2N2p067WasoZ00",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome Mobile",
+        "browserVersion": "139.0.0",
+        "os": "Android",
+        "osVersion": "10"
+      },
+      "requestId": "1755799567257.1i44Ij",
+      "timestamp": 1755799639475
+    },
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+    "client_timestamp": "2025-08-21T18:07:23.617Z"
+  },
+  {
+    "timestamp": "2025-08-21T18:08:03.847107",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "U7vfXZ2N2p067WasoZ00",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome Mobile",
+        "browserVersion": "139.0.0",
+        "os": "Android",
+        "osVersion": "10"
+      },
+      "requestId": "1755799567257.1i44Ij",
+      "timestamp": 1755799639475
+    },
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+    "client_timestamp": "2025-08-21T18:08:03.625Z"
+  },
+  {
+    "timestamp": "2025-08-21T18:11:14.801691",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "U7vfXZ2N2p067WasoZ00",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome Mobile",
+        "browserVersion": "139.0.0",
+        "os": "Android",
+        "osVersion": "10"
+      },
+      "requestId": "1755799873945.WU3VbR",
+      "timestamp": 1755799873876
+    },
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+    "client_timestamp": "2025-08-21T18:11:14.566Z"
+  },
+  {
+    "timestamp": "2025-08-21T18:11:16.466503",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "U7vfXZ2N2p067WasoZ00",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome Mobile",
+        "browserVersion": "139.0.0",
+        "os": "Android",
+        "osVersion": "10"
+      },
+      "requestId": "1755799873945.WU3VbR",
+      "timestamp": 1755799873876
+    },
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+    "client_timestamp": "2025-08-21T18:11:16.242Z"
+  },
+  {
+    "timestamp": "2025-08-21T18:11:37.793772",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "U7vfXZ2N2p067WasoZ00",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome Mobile",
+        "browserVersion": "139.0.0",
+        "os": "Android",
+        "osVersion": "10"
+      },
+      "requestId": "1755799873945.WU3VbR",
+      "timestamp": 1755799873876
+    },
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+    "client_timestamp": "2025-08-21T18:11:37.562Z"
   }
 ]

@@ -94,3 +94,45 @@ def verify_otp(email: str, otp: str) -> bool:
     store.pop(email.lower(), None)
     _save_store(store)
     return True
+
+# --- Phone OTP helpers (stored-only, printed to backend logs) ---
+
+def create_and_store_phone_otp(email: str, phone_e164: str) -> None:
+    """Create OTP for phone verification keyed by the user email (namespaced) and print it.
+    No email/SMS is sent; OTP is logged to the backend console for demo/testing.
+    """
+    if not email:
+        raise ValueError("email required for phone otp")
+    key = f"phone:{email.lower()}"
+    store = _load_store()
+    _cleanup_expired(store)
+    otp = _generate_otp()
+    # Print clearly so it's easy to see during testing
+    print(f"[PHONE-OTP] Email={email} Phone={phone_e164} OTP={otp}")
+    store[key] = {
+        "otp": otp,
+        "expiresAt": int(time()) + OTP_TTL_SECONDS,
+        "phone": phone_e164,
+    }
+    _save_store(store)
+
+
+def verify_phone_otp(email: str, otp: str) -> tuple[bool, str | None]:
+    if not email:
+        return False
+    key = f"phone:{email.lower()}"
+    store = _load_store()
+    entry = store.get(key)
+    if not entry:
+        return False, None
+    now = int(time())
+    if int(entry.get("expiresAt", 0)) < now:
+        store.pop(key, None)
+        _save_store(store)
+        return False, None
+    if str(entry.get("otp")) != str(otp):
+        return False, None
+    phone = entry.get("phone")
+    store.pop(key, None)
+    _save_store(store)
+    return True, phone

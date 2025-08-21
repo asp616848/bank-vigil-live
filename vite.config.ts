@@ -15,6 +15,9 @@ export default defineConfig(({ mode }) => ({
         secure: false,
       },
     },
+    allowedHosts: [
+      "f56c34abd470.ngrok-free.app"
+    ],
   },
   plugins: [
     react(),

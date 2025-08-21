@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session
 import flask_cors
 import requests
 import os
@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 from requests.auth import HTTPBasicAuth
 import json
 from pathlib import Path
+import random
+from base64 import urlsafe_b64encode, urlsafe_b64decode
 from datetime import datetime
 from email.message import EmailMessage
 import smtplib, ssl, uuid, secrets
@@ -17,11 +19,36 @@ from otp_service import (
     create_and_store_phone_otp,
     verify_phone_otp,
 )
+# WebAuthn / FIDO2
+from fido2.server import Fido2Server
+from fido2.webauthn import PublicKeyCredentialRpEntity
+from fido2 import cbor
+
 
 load_dotenv()
 app = Flask(__name__)
 flask_cors.CORS(app)
 
+# Secret key for Flask session (required for WebAuthn and session usage)
+app.secret_key = os.urandom(32)
+
+# -----------------------------
+# Relying Party (your site) info (WebAuthn / FIDO2)
+# -----------------------------
+rp = PublicKeyCredentialRpEntity(id="localhost", name="My App")
+server = Fido2Server(rp)
+
+# -----------------------------
+# In-memory stores (replace with DB in production)
+# -----------------------------
+# Phone OTP temporary store
+otp_store = {}
+# Simple WebAuthn store for passkey IDs (tisha-branch simple flow)
+user_credentials = {}
+# FIDO2 credential store for full ceremony (main data structure used by Fido2Server)
+credentials = {}
+
+# TypingDNA creds
 API_KEY = os.getenv("TYPINGDNA_API_KEY")
 API_SECRET = os.getenv("TYPINGDNA_API_SECRET")
 
@@ -39,26 +66,20 @@ def _read_accounts_file(path: Path):
             return []
         with path.open("r", encoding="utf-8") as f:
             data = json.load(f)
-            # File format is an array of accounts
             if isinstance(data, list):
                 return data
-            # In case file accidentally contains an object
             return data.get("accounts", []) if isinstance(data, dict) else []
     except Exception:
-        # On parse error, treat as empty to avoid breaking login
         return []
-
 
 def _write_accounts_file(path: Path, accounts: list):
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("w", encoding="utf-8") as f:
         json.dump(accounts, f, ensure_ascii=False, indent=2)
 
-
 def _load_all_accounts():
     old_accounts = _read_accounts_file(OLD_ACCOUNTS_PATH)
     new_accounts = _read_accounts_file(NEW_ACCOUNTS_PATH)
-    # Merge unique by email (case-insensitive), prefer old over new
     merged = {}
     for acc in new_accounts:
         email = (acc.get("email") or "").lower()
@@ -70,7 +91,7 @@ def _load_all_accounts():
             merged[email] = acc  # old overrides new
     return list(merged.values())
 
-
+  
 def _update_account_phone(email: str, phone_e164: str) -> bool:
     """Add or update the phone field for the account with this email.
     Prefer updating in the file where the account exists; if present in both, old overrides new.
@@ -100,15 +121,12 @@ def _update_account_phone(email: str, phone_e164: str) -> bool:
         return True
 
     return False
-
-
 @app.route("/accounts", methods=["GET", "POST"])
 def accounts():
     if request.method == "GET":
         accounts = _load_all_accounts()
         return jsonify({"accounts": accounts})
     
-    # POST -> create new account in new-accounts.json if not existing in either file
     data = request.get_json(force=True, silent=True) or {}
     required = ["email", "password", "name", "username"]
     if not all(k in data and isinstance(data[k], str) and data[k].strip() for k in required):
@@ -116,11 +134,9 @@ def accounts():
 
     email_lower = data["email"].strip().lower()
     all_accounts = _load_all_accounts()
-    # Ensure user id (email) not in old or new accounts
     if any((acc.get("email") or "").lower() == email_lower for acc in all_accounts):
         return jsonify({"error": "Account already exists"}), 409
 
-    # Append to new-accounts.json
     new_accounts = _read_accounts_file(NEW_ACCOUNTS_PATH)
     new_accounts.append({
         "email": data["email"].strip(),
@@ -132,6 +148,9 @@ def accounts():
     return jsonify({"success": True, "account": data}), 201
 
 
+# -----------------------------
+# Email OTP with otp_service (from main)
+# -----------------------------
 @app.route('/otp/send', methods=['POST'])
 def otp_send():
     body = request.get_json(force=True, silent=True) or {}
@@ -143,7 +162,6 @@ def otp_send():
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/otp/verify', methods=['POST'])
 def otp_verify():
@@ -192,7 +210,7 @@ def phone_verify_otp():
 
 @app.route("/typingdna/verify", methods=["POST"])
 def verify_typing():
-    data = request.get_json()
+    data = request.get_json() or {}
     user_id = data.get("userId")
     tp = data.get("tp")
     textid = data.get("textid")
@@ -201,47 +219,50 @@ def verify_typing():
         return jsonify({"error": "Missing userId or typing pattern"}), 400
     try:
         # 1. Check user enrollments
-        r_status = requests.get(f"https://api.typingdna.com/user/{user_id}",
-                                auth=HTTPBasicAuth(API_KEY, API_SECRET))
+        r_status = requests.get(
+            f"https://api.typingdna.com/user/{user_id}",
+            auth=HTTPBasicAuth(API_KEY, API_SECRET)
+        )
         status_data = r_status.json()
         patterns_count = status_data.get("count", 0)
 
+        # Build payload for save/verify
+        payload = {"tp": tp}
+        if textid:
+            payload["textid"] = textid
+
         if patterns_count < 3:
             # 2. Enroll pattern
-            payload = {"tp": tp}
-            if textid:
-                payload["textid"] = textid
-            r_save = requests.post(f"https://api.typingdna.com/save/{user_id}",
-                                   data=payload,
-                                   auth=HTTPBasicAuth(API_KEY, API_SECRET))
+            r_save = requests.post(
+                f"https://api.typingdna.com/save/{user_id}",
+                data=payload,
+                auth=HTTPBasicAuth(API_KEY, API_SECRET)
+            )
             return jsonify({"status": "enrolled", "details": r_save.json()})
         else:
             # 3. Verify pattern
-            payload = {"tp": tp}
-            if textid:
-                payload["textid"] = textid
-            r_verify = requests.post(f"https://api.typingdna.com/verify/{user_id}",
-                                     data=payload,
-                                     auth=HTTPBasicAuth(API_KEY, API_SECRET))
+            r_verify = requests.post(
+                f"https://api.typingdna.com/verify/{user_id}",
+                data=payload,
+                auth=HTTPBasicAuth(API_KEY, API_SECRET)
+            )
             verify_data = r_verify.json()
-            
-            # Custom confidence check
-            confidence_threshold = 70 
-            if verify_data.get("score", 0) >= confidence_threshold:
-                verify_data["result"] = 1 # Force result to 1 if confidence is met
-            else:
-                verify_data["result"] = 0
 
-            print(verify_data)
+            # Custom confidence gating
+            confidence_threshold = 70
+            verify_data["result"] = 1 if verify_data.get("score", 0) >= confidence_threshold else 0
+
             return jsonify({"status": "verified", "details": verify_data})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
 
+# -----------------------------
+# Password reset (from main)
+# -----------------------------
 def _update_account_password(email: str, new_password: str) -> bool:
     email_l = (email or "").lower()
-    # Try new accounts first
     new_accounts = _read_accounts_file(NEW_ACCOUNTS_PATH)
     updated = False
     for acc in new_accounts:
@@ -253,7 +274,6 @@ def _update_account_password(email: str, new_password: str) -> bool:
         _write_accounts_file(NEW_ACCOUNTS_PATH, new_accounts)
         return True
 
-    # Then old accounts
     old_accounts = _read_accounts_file(OLD_ACCOUNTS_PATH)
     for acc in old_accounts:
         if (acc.get("email") or "").lower() == email_l:
@@ -266,38 +286,164 @@ def _update_account_password(email: str, new_password: str) -> bool:
 
     return False
 
-
 @app.route('/accounts/reset-password', methods=['POST'])
 def reset_password():
     body = request.get_json(force=True, silent=True) or {}
     email = (body.get('email') or '').strip()
     otp = (body.get('otp') or '').strip()
     new_password = (body.get('newPassword') or '')
-
     if not email or not otp or not new_password:
         return jsonify({"error": "Email, OTP and newPassword are required"}), 400
-
-    # verify OTP
     if not verify_otp(email, otp):
         return jsonify({"error": "Invalid or expired OTP"}), 401
-
-    # update password in the appropriate JSON file
     if not _update_account_password(email, new_password):
         return jsonify({"error": "Account not found"}), 404
-
     return jsonify({"success": True})
 
+
+# -----------------------------
+# Phone OTP (tisha-branch feature)
+# -----------------------------
+@app.route("/api/send-otp", methods=["POST"])
+def send_phone_otp():
+    phone = (request.json or {}).get("phone")
+    if not phone:
+        return jsonify({"error": "Phone number required"}), 400
+    otp = str(random.randint(100000, 999999))
+    otp_store[phone] = otp
+    # NOTE: Replace this print with real SMS integration in production
+    print(f"DEBUG: OTP for {phone} is {otp}")
+    return jsonify({"message": "OTP sent"})
+
+@app.route("/api/verify-otp", methods=["POST"])
+def verify_phone_otp():
+    payload = request.json or {}
+    phone = payload.get("phone")
+    otp = payload.get("otp")
+    if not phone or not otp:
+        return jsonify({"error": "Phone and OTP required"}), 400
+    if otp_store.get(phone) == otp:
+        otp_store.pop(phone, None)
+        return jsonify({"message": "Verified"})
+    return jsonify({"error": "Invalid OTP"}), 400
+
+
+# -----------------------------
+# WebAuthn helpers (tisha-branch feature)
+# -----------------------------
+def b64encode_bytes(data: bytes) -> str:
+    return urlsafe_b64encode(data).rstrip(b"=").decode("utf-8")
+
+def b64decode_bytes(data: str) -> bytes:
+    padding = '=' * (-len(data) % 4)
+    return urlsafe_b64decode(data + padding)
+
+# Lightweight challenge / registration (simple store)
+@app.route("/webauthn/register-challenge")
+def webauthn_register_challenge():
+    user_id = os.urandom(16)
+    session["current_challenge"] = os.urandom(32)
+
+    publicKey = {
+        "challenge": b64encode_bytes(session["current_challenge"]),
+        "rp": {"name": "MyApp", "id": request.host.split(":")[0]},
+        "user": {
+            "id": b64encode_bytes(user_id),
+            "name": "user@example.com",
+            "displayName": "Example User"
+        },
+        "pubKeyCredParams": [{"type": "public-key", "alg": -7}],
+        "timeout": 60000,
+        "attestation": "direct"
+    }
+    return jsonify(publicKey)
+
+@app.route("/webauthn/register-credential", methods=["POST"])
+def webauthn_register_credential():
+    data = request.get_json() or {}
+    # Store credential in memory (replace with DB persistence)
+    cred_id = data.get("id")
+    if not cred_id:
+        return jsonify({"error": "Missing credential id"}), 400
+    user_credentials[cred_id] = data
+    return jsonify({"success": True})
+
+@app.route("/webauthn/authenticate-challenge")
+def webauthn_authenticate_challenge():
+    session["current_challenge"] = os.urandom(32)
+    allow_credentials = [
+        {"type": "public-key", "id": b64encode_bytes(b64decode_bytes(k))}
+        for k in user_credentials.keys()
+    ] if user_credentials else None
+
+    publicKey = {
+        "challenge": b64encode_bytes(session["current_challenge"]),
+        "timeout": 60000,
+        "rpId": request.host.split(":")[0],
+        "allowCredentials": allow_credentials
+    }
+    return jsonify(publicKey)
+
+@app.route("/webauthn/verify-assertion", methods=["POST"])
+def webauthn_verify_assertion():
+    data = request.get_json() or {}
+    # Placeholder: verify signature using stored public key in production
+    if data.get("id") in user_credentials:
+        return jsonify({"success": True})
+    return jsonify({"error": "Verification failed"}), 400
+
+# Full FIDO2 ceremony (uses Fido2Server from main codebase)
+@app.route("/webauthn/register", methods=["POST"])
+def webauthn_register():
+    # Replace with your actual logged-in user mapping
+    user = {
+        "id": b"user123",
+        "name": "user@example.com",
+        "displayName": "User Example"
+    }
+    registration_data, state = server.register_begin(
+        user,
+        credentials.get(user["id"], []),
+        user_verification="preferred"
+    )
+    session["state"] = state
+    return app.response_class(cbor.encode(registration_data), mimetype="application/cbor")
+
+@app.route("/webauthn/register/complete", methods=["POST"])
+def webauthn_register_complete():
+    data = cbor.decode(request.get_data())
+    auth_data = server.register_complete(session["state"], data)
+    user_id = b"user123"
+    credentials.setdefault(user_id, []).append(auth_data.credential_data)
+    return jsonify({"status": "ok"})
+
+@app.route("/webauthn/authenticate", methods=["POST"])
+def webauthn_authenticate():
+    user_id = b"user123"
+    if user_id not in credentials or not credentials[user_id]:
+        return jsonify({"error": "No credentials registered"}), 400
+    auth_data, state = server.authenticate_begin(credentials[user_id])
+    session["state"] = state
+    return app.response_class(cbor.encode(auth_data), mimetype="application/cbor")
+
+@app.route("/webauthn/authenticate/complete", methods=["POST"])
+def webauthn_authenticate_complete():
+    data = cbor.decode(request.get_data())
+    server.authenticate_complete(session["state"], credentials[b"user123"], data)
+    return jsonify({"status": "authenticated"})
+
+
+# -----------------------------
+# Security: fingerprint logging (from main)
+# -----------------------------
 @app.route('/security/log-fingerprint', methods=['POST'])
 def log_fingerprint():
     """Log fingerprint data for security monitoring"""
     try:
         data = request.get_json(force=True, silent=True) or {}
-        
-        # Validate required fields
         if not data.get('action') or not data.get('fingerprint'):
             return jsonify({"error": "Missing required fields"}), 400
         
-        # Add server timestamp
         log_entry = {
             "timestamp": datetime.utcnow().isoformat(),
             "action": data.get('action'),
@@ -307,7 +453,6 @@ def log_fingerprint():
             "client_timestamp": data.get('timestamp')
         }
         
-        # Read existing logs
         logs = []
         if FINGERPRINT_LOGS_PATH.exists():
             try:
@@ -316,14 +461,10 @@ def log_fingerprint():
             except Exception:
                 logs = []
         
-        # Append new log entry
         logs.append(log_entry)
-        
-        # Keep only last 1000 entries to prevent file from growing too large
         if len(logs) > 1000:
             logs = logs[-1000:]
         
-        # Write back to file
         FINGERPRINT_LOGS_PATH.parent.mkdir(parents=True, exist_ok=True)
         with FINGERPRINT_LOGS_PATH.open("w", encoding="utf-8") as f:
             json.dump(logs, f, ensure_ascii=False, indent=2)
@@ -344,7 +485,6 @@ def get_fingerprint_logs():
         with FINGERPRINT_LOGS_PATH.open("r", encoding="utf-8") as f:
             logs = json.load(f)
         
-        # Optional: filter by email or action
         email_filter = request.args.get('email')
         action_filter = request.args.get('action')
         
@@ -354,15 +494,17 @@ def get_fingerprint_logs():
         if action_filter:
             logs = [log for log in logs if log.get('action') == action_filter]
         
-        # Return most recent first
         logs.reverse()
-        
-        return jsonify({"logs": logs[:100]})  # Return last 100 entries
+        return jsonify({"logs": logs[:100]})
     
     except Exception as e:
         print(f"Error retrieving fingerprint logs: {e}")
         return jsonify({"error": "Failed to retrieve logs"}), 500
 
+
+# -----------------------------
+# Security: login attempt alerts via email (from main)
+# -----------------------------
 def _send_email(to_email: str, subject: str, body: str):
     smtp_user = os.getenv("SMTP_USER") or os.getenv("GMAIL_USER")
     smtp_pass = os.getenv("SMTP_PASS") or os.getenv("GMAIL_APP_PASSWORD")
@@ -379,8 +521,6 @@ def _send_email(to_email: str, subject: str, body: str):
         server.login(smtp_user, smtp_pass)
         server.send_message(msg)
 
-# --- Login attempt alert helpers ---
-
 def _load_login_attempts():
     if not LOGIN_ATTEMPTS_PATH.exists():
         return []
@@ -396,7 +536,6 @@ def _save_login_attempts(attempts: list):
     with LOGIN_ATTEMPTS_PATH.open('w', encoding='utf-8') as f:
         json.dump(attempts, f, ensure_ascii=False, indent=2)
 
-
 def _compose_login_alert_email(attempt: dict) -> tuple[str, str]:
     base_url = os.getenv('APP_EXTERNAL_BASE_URL') or 'http://localhost:5000'
     token = attempt['token']
@@ -411,7 +550,7 @@ def _compose_login_alert_email(attempt: dict) -> tuple[str, str]:
         f"Time (UTC): {attempt.get('timestamp')}",
         f"IP Address: {attempt.get('ip') or 'N/A'}",
         f"Location (approx): {attempt.get('location') or 'N/A'}",
-        f"Browser: {attempt.get('device', {}).get('browser') or attempt.get('user_agent')[:40]}",
+        f"Browser: {attempt.get('device', {}).get('browser') or (attempt.get('user_agent') or '')[:40]}",
         f"OS / Platform: {attempt.get('device', {}).get('os') or 'N/A'}",
         f"Device Fingerprint: {attempt.get('fingerprint') or 'N/A'}",
         f"Risk Score: {attempt.get('risk', {}).get('score', 'N/A')}",
@@ -433,7 +572,6 @@ def _compose_login_alert_email(attempt: dict) -> tuple[str, str]:
     body = "\n".join(lines)
     return subject, body
 
-
 def _create_login_attempt(payload: dict) -> dict:
     attempts = _load_login_attempts()
     attempt = {
@@ -446,16 +584,14 @@ def _create_login_attempt(payload: dict) -> dict:
         "fingerprint": payload.get('fingerprint'),
         "device": payload.get('device') or {},  # {browser, os, platform, mobile}
         "risk": payload.get('risk') or {},      # {score, reasons: []}
-        "location": payload.get('location'),    # optional geolocation string
+        "location": payload.get('location'),
         "status": "pending"
     }
     attempts.append(attempt)
-    # keep last 500
     if len(attempts) > 500:
         attempts = attempts[-500:]
     _save_login_attempts(attempts)
     return attempt
-
 
 def _update_attempt_status(token: str, status: str) -> dict | None:
     attempts = _load_login_attempts()
@@ -481,7 +617,6 @@ def record_login_attempt():
         subject, body_txt = _compose_login_alert_email(attempt)
         _send_email(email, subject, body_txt)
     except Exception as e:
-        # still return attempt but indicate email failed
         return jsonify({'attemptId': attempt['id'], 'status': attempt['status'], 'emailError': str(e)}), 500
     return jsonify({'attemptId': attempt['id'], 'status': attempt['status']}), 201
 
@@ -519,5 +654,9 @@ def respond_login_attempt():
         return jsonify({'error': 'invalid token'}), 404
     return jsonify({'success': True, 'attempt': updated})
 
+
+# -----------------------------
+# App runner
+# -----------------------------
 if __name__ == "__main__":
-    app.run(port=5000, debug=True)
+    app.run(port=8000, debug=True)

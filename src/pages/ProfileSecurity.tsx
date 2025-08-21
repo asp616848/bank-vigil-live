@@ -23,6 +23,68 @@ const ProfileSecurity: React.FC = () => {
   const [existingPhone, setExistingPhone] = useState<string | undefined>(() => user?.phone as string | undefined);
   const [isEditingPhone, setIsEditingPhone] = useState<boolean>(false);
 
+  const { features, setFeature, safetyScore } = useSecuritySettings();
+  const [phone, setPhone] = React.useState(user?.phone || "");
+  const [otp, setOtp] = React.useState("");
+  const [otpSent, setOtpSent] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  // const sendOtp = async () => {
+  //   setLoading(true);
+  //   try {
+  //     await axios.post("http://localhost:8000/api/send-otp", { phone })
+  //     setOtpSent(true);
+  //   } catch (err) {
+  //     console.error("Error sending OTP", err);
+  //   }
+  //   setLoading(false);
+  // };
+
+  // const verifyOtp = async () => {
+  //   setLoading(true);
+  //   try {
+  //     await axios.post("http://localhost:8000/api/verify-otp", { phone, otp });
+  //     toast({ title: "Verified", description: "Phone number verified successfully!" });
+  //   } catch (err) {
+  //     console.error("Invalid OTP", err);
+  //   }
+  //   setLoading(false);
+  // };
+
+  const [phoneVerified, setPhoneVerified] = React.useState(false);
+
+// On phone change, reset verification:
+const onPhoneChange = (newPhone: string) => {
+  setPhone(newPhone);
+  setPhoneVerified(false);
+  setOtpSent(false);
+  setOtp("");
+};
+
+const sendOtp = async () => {
+  setLoading(true);
+  try {
+    await axios.post("http://localhost:8000/api/send-otp", { phone });
+    setOtpSent(true);
+  } catch (err) {
+    console.error("Error sending OTP", err);
+  }
+  setLoading(false);
+};
+
+const verifyOtp = async () => {
+  setLoading(true);
+  try {
+    await axios.post("http://localhost:8000/api/verify-otp", { phone, otp });
+    toast({ title: "Verified", description: "Phone number verified successfully!" });
+    setPhoneVerified(true);  // Mark as verified
+    setOtpSent(false);      // Hide OTP inputs
+    setOtp("");
+  } catch (err) {
+    console.error("Invalid OTP", err);
+  }
+  setLoading(false);
+};
   useEffect(() => {
     document.title = "Profile & Security — Bank of India";
   }, []);
@@ -228,6 +290,8 @@ const ProfileSecurity: React.FC = () => {
                 </>
               )}
             </div>
+
+
             <div className="md:col-span-2 flex items-center justify-between rounded-md border p-3">
               <div>
                 <div className="text-sm font-medium">Enable Biometric Authentication</div>

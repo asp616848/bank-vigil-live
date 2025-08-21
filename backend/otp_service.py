@@ -68,6 +68,7 @@ def create_and_send_otp(email: str) -> None:
     store = _load_store()
     _cleanup_expired(store)
     otp = _generate_otp()
+    print("\notp is :" + otp)
     # Save/replace OTP for this email
     store[email.lower()] = {
         "otp": otp,
@@ -75,7 +76,6 @@ def create_and_send_otp(email: str) -> None:
     }
     _save_store(store)
     send_email_otp(email, otp)
-
 
 def verify_otp(email: str, otp: str) -> bool:
     store = _load_store()

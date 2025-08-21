@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -6,6 +6,10 @@ import { ArrowDownRight, ArrowUpRight, CreditCard, FileText, Send } from "lucide
 import { useNavigate } from "react-router-dom";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip } from "recharts";
 import { useSearch } from "@/hooks/useSearch";
+import FingerprintDisplay from "@/components/FingerprintDisplay";
+import BotDetector from "@/components/BotDetector";
+import { useFingerprint } from "@/hooks/useFingerprint";
+import { toast } from "@/hooks/use-toast";
 
 function currency(n: number) {
   return n.toLocaleString("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 });
@@ -14,6 +18,19 @@ function currency(n: number) {
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const { query } = useSearch();
+  const { fingerprintData } = useFingerprint();
+  const warnedRef = useRef(false);
+
+  useEffect(() => {
+    if (!warnedRef.current && fingerprintData && fingerprintData.confidence < 0.99) {
+      warnedRef.current = true;
+      toast({
+        title: "Automation suspected",
+        description: "Mouse pointer controlled by bot.",
+        variant: "destructive",
+      });
+    }
+  }, [fingerprintData]);
 
   const [transactions, setTransactions] = useState<{ id: number; type: string; desc: string; amount: number; date: string }[]>([]);
   useEffect(() => {
@@ -61,6 +78,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <BotDetector />
       <header>
         <h1 className="text-xl font-semibold">Home Dashboard</h1>
       </header>
@@ -157,6 +175,11 @@ const Dashboard: React.FC = () => {
             </AreaChart>
           </ResponsiveContainer>
         </div>
+      </section>
+
+      <section>
+        <h2 className="text-sm font-semibold mb-3">Security & Device Information</h2>
+        <FingerprintDisplay />
       </section>
     </div>
   );

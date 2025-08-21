@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, Eye, EyeOff } from "lucide-react";
+import { useFingerprint } from "@/hooks/useFingerprint";
+import BotDetector from "@/components/BotDetector";
 
 // Replace direct JSON access with backend API endpoints
 const ACCOUNTS_API = "http://localhost:8000/accounts";
@@ -22,6 +24,7 @@ const passwordValid = (pwd: string) => {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { isLoading: fingerprintLoading, fingerprintData, logFingerprintForSecurity, refreshFingerprint } = useFingerprint();
   const [mode, setMode] = useState<"login" | "create" | "enroll">("login");
   const [loginStep, setLoginStep] = useState<"email" | "password" | "otp">("email");
   const [isEmailLocked, setIsEmailLocked] = useState(false);
@@ -61,6 +64,14 @@ const Login: React.FC = () => {
       }
     };
   }, []);
+
+  // OTP cooldown timer
+  useEffect(() => {
+    if (otpCooldown > 0) {
+      const timer = setTimeout(() => setOtpCooldown(prev => prev - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [otpCooldown]);
 
   const resetLoginState = (opts?: { preservePassword?: boolean }) => {
     setLoginStep("email");
@@ -127,6 +138,10 @@ const Login: React.FC = () => {
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Log fingerprint for account creation attempt
+    await logFingerprintForSecurity('account_creation_attempt', email);
+    
     if (!passwordValid(password)) {
       toast({
         title: "Weak password",
@@ -235,6 +250,10 @@ const Login: React.FC = () => {
 
   const handleEmailVerification = async () => {
     setLoading(true);
+    
+    // Log fingerprint for email verification attempt
+    await logFingerprintForSecurity('email_verification_attempt', email);
+    
     if (!isTypingDNAReady) {
       toast({ title: "Please wait", description: "Biometrics are initializing.", variant: "destructive" });
       setLoading(false);
@@ -243,6 +262,7 @@ const Login: React.FC = () => {
 
     const found = accounts.find((a) => a.email.toLowerCase() === email.toLowerCase());
     if (!found) {
+      await logFingerprintForSecurity('login_attempt_failed_email_not_found', email);
       toast({ title: "Invalid credentials", description: "This email is not registered.", variant: "destructive" });
       setLoading(false);
       return;
@@ -267,12 +287,14 @@ const Login: React.FC = () => {
       const data = await res.json();
 
       if ((data.status === 'verified' && data.details?.result === 1) || data.status === 'enrolled') {
+        await logFingerprintForSecurity('biometric_verification_success', email);
         toast({ title: "Biometric Scan Passed", description: "Please enter your password." });
         setLoginStep("password");
         setIsEmailLocked(true);
         setOtpSent(false);
         setForgotMode(false);
       } else {
+        await logFingerprintForSecurity('biometric_verification_failed', email);
         toast({
           title: "Biometric Mismatch",
           description: "Typing pattern has changed. Please provide both password and OTP.",
@@ -367,10 +389,17 @@ const Login: React.FC = () => {
 
     if (loginStep === 'password' && !forgotMode) {
       if (password === found.password) {
-        sessionStorage.setItem("currentUser", JSON.stringify({ email: found.email, name: found.name, username: found.username }));
+        await logFingerprintForSecurity('login_success', email);
+        sessionStorage.setItem("currentUser", JSON.stringify({ 
+          email: found.email, 
+          name: found.name, 
+          username: found.username,
+          fingerprintId: fingerprintData?.visitorId 
+        }));
         toast({ title: "Welcome back!", description: `Signed in as ${found.name}` });
         setTimeout(() => navigate("/app/dashboard"), 400);
       } else {
+        await logFingerprintForSecurity('login_failed_wrong_password', email);
         toast({ title: "Invalid Password", description: "The password you entered is incorrect.", variant: "destructive" });
       }
     } else if (loginStep === 'otp') {
@@ -388,10 +417,17 @@ const Login: React.FC = () => {
         });
         const data = await res.json();
         if (res.ok && data.valid && password === found.password) {
-          sessionStorage.setItem("currentUser", JSON.stringify({ email: found.email, name: found.name, username: found.username }));
+          await logFingerprintForSecurity('login_success_via_otp', email);
+          sessionStorage.setItem("currentUser", JSON.stringify({ 
+            email: found.email, 
+            name: found.name, 
+            username: found.username,
+            fingerprintId: fingerprintData?.visitorId 
+          }));
           toast({ title: "Welcome back!", description: `Signed in via OTP as ${found.name}` });
           setTimeout(() => navigate("/app/dashboard"), 400);
         } else {
+          await logFingerprintForSecurity('login_failed_invalid_otp_or_password', email);
           toast({ title: "Invalid details", description: "OTP invalid/expired or wrong password.", variant: "destructive" });
         }
       } catch (e: any) {
@@ -575,6 +611,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="relative min-h-screen grid place-items-center overflow-hidden">
+      <BotDetector />
       <motion.section
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}

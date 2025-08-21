@@ -7,6 +7,7 @@ import { FpjsProvider } from '@fingerprintjs/fingerprintjs-pro-react';
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 import AppLayout from "./components/layout/AppLayout";
+import RequireBiometric from "./components/RequireBiometric";
 import Dashboard from "./pages/Dashboard";
 import Payments from "./pages/Payments";
 import Statements from "./pages/Statements";
@@ -55,14 +56,18 @@ const App = () => (
                 <Route path="/" element={<Login />} />
                 <Route element={<RequireAuth />}>
                   <Route path="/app" element={<AppLayout />}>
-                    <Route path="dashboard" element={<Dashboard />} />
+                    {/* Wrap sensitive routes with biometric gate */}
+                    <Route element={<RequireBiometric />}>
+                      <Route path="dashboard" element={<Dashboard />} />
+                      <Route path="transfers" element={<Transfers />} />
+                      <Route path="statements" element={<Statements />} />
+                      <Route path="cards" element={<Cards />} />
+                      <Route path="profile-security" element={<ProfileSecurity />} />
+                      <Route path="security-logs" element={<SecurityLogs />} />
+                    </Route>
+                    {/* Non-gated routes */}
                     <Route path="payments" element={<Payments />} />
                     <Route path="pay-bill" element={<PayBill />} />
-                    <Route path="transfers" element={<Transfers />} />
-                    <Route path="statements" element={<Statements />} />
-                    <Route path="cards" element={<Cards />} />
-                    <Route path="profile-security" element={<ProfileSecurity />} />
-                    <Route path="security-logs" element={<SecurityLogs />} />
                     <Route path="dnaform" element={<TypingDNAForm />} />
                     <Route path="settings" element={<Settings />} />
                   </Route>

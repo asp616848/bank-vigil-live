@@ -7,6 +7,8 @@ from requests.auth import HTTPBasicAuth
 import json
 from pathlib import Path
 from datetime import datetime
+from email.message import EmailMessage
+import smtplib, ssl, uuid, secrets
 
 # Import OTP helpers
 from otp_service import create_and_send_otp, verify_otp
@@ -24,6 +26,7 @@ PUBLIC_DIR = (BASE_DIR / ".." / "public").resolve()
 OLD_ACCOUNTS_PATH = PUBLIC_DIR / "old-accounts.json"
 NEW_ACCOUNTS_PATH = PUBLIC_DIR / "new-accounts.json"
 FINGERPRINT_LOGS_PATH = PUBLIC_DIR / "fingerprint-logs.json"
+LOGIN_ATTEMPTS_PATH = BASE_DIR / "login_attempts.json"
 
 def _read_accounts_file(path: Path):
     try:
@@ -289,6 +292,162 @@ def get_fingerprint_logs():
     except Exception as e:
         print(f"Error retrieving fingerprint logs: {e}")
         return jsonify({"error": "Failed to retrieve logs"}), 500
+
+def _send_email(to_email: str, subject: str, body: str):
+    smtp_user = os.getenv("SMTP_USER") or os.getenv("GMAIL_USER")
+    smtp_pass = os.getenv("SMTP_PASS") or os.getenv("GMAIL_APP_PASSWORD")
+    if not smtp_user or not smtp_pass:
+        raise RuntimeError("SMTP credentials not configured. Set SMTP_USER and SMTP_PASS.")
+    msg = EmailMessage()
+    msg["From"] = smtp_user
+    msg["To"] = to_email
+    msg["Subject"] = subject
+    msg.set_content(body)
+    context = ssl.create_default_context()
+    with smtplib.SMTP("smtp.gmail.com", 587) as server:
+        server.starttls(context=context)
+        server.login(smtp_user, smtp_pass)
+        server.send_message(msg)
+
+# --- Login attempt alert helpers ---
+
+def _load_login_attempts():
+    if not LOGIN_ATTEMPTS_PATH.exists():
+        return []
+    try:
+        with LOGIN_ATTEMPTS_PATH.open('r', encoding='utf-8') as f:
+            data = json.load(f)
+            return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+def _save_login_attempts(attempts: list):
+    LOGIN_ATTEMPTS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with LOGIN_ATTEMPTS_PATH.open('w', encoding='utf-8') as f:
+        json.dump(attempts, f, ensure_ascii=False, indent=2)
+
+
+def _compose_login_alert_email(attempt: dict) -> tuple[str, str]:
+    base_url = os.getenv('APP_EXTERNAL_BASE_URL') or 'http://localhost:5000'
+    token = attempt['token']
+    confirm_url = f"{base_url}/security/login-attempt/confirm?token={token}"
+    report_url = f"{base_url}/security/login-attempt/report?token={token}"
+
+    subject = f"New login to your account from {attempt.get('device', {}).get('browser') or 'an unknown device'}"
+    lines = [
+        f"Hi {attempt.get('email')},",
+        "",
+        "We detected a sign-in to your account:",
+        f"Time (UTC): {attempt.get('timestamp')}",
+        f"IP Address: {attempt.get('ip') or 'N/A'}",
+        f"Location (approx): {attempt.get('location') or 'N/A'}",
+        f"Browser: {attempt.get('device', {}).get('browser') or attempt.get('user_agent')[:40]}",
+        f"OS / Platform: {attempt.get('device', {}).get('os') or 'N/A'}",
+        f"Device Fingerprint: {attempt.get('fingerprint') or 'N/A'}",
+        f"Risk Score: {attempt.get('risk', {}).get('score', 'N/A')}",
+        f"Risk Flags: {', '.join(attempt.get('risk', {}).get('reasons', [])) or 'None'}",
+        "",
+        "If this was you, you can safely confirm below.",
+        "If this was NOT you, report it immediately so we can help secure your account.",
+        "",
+        f"YES, IT WAS ME: {confirm_url}",
+        f"NO, SECURE MY ACCOUNT: {report_url}",
+        "",
+        "If you did not initiate this and report it, we will invalidate active sessions and may require a password reset/OTP verification.",
+        "",
+        "Security Tip: Enable multi-factor authentication and review recent security logs in your profile.",
+        "",
+        "Thank you,",
+        "Security Team"
+    ]
+    body = "\n".join(lines)
+    return subject, body
+
+
+def _create_login_attempt(payload: dict) -> dict:
+    attempts = _load_login_attempts()
+    attempt = {
+        "id": uuid.uuid4().hex,
+        "token": secrets.token_urlsafe(24),
+        "email": (payload.get('email') or '').strip().lower(),
+        "timestamp": datetime.utcnow().isoformat(),
+        "ip": payload.get('ip') or request.remote_addr,
+        "user_agent": payload.get('userAgent') or request.headers.get('User-Agent'),
+        "fingerprint": payload.get('fingerprint'),
+        "device": payload.get('device') or {},  # {browser, os, platform, mobile}
+        "risk": payload.get('risk') or {},      # {score, reasons: []}
+        "location": payload.get('location'),    # optional geolocation string
+        "status": "pending"
+    }
+    attempts.append(attempt)
+    # keep last 500
+    if len(attempts) > 500:
+        attempts = attempts[-500:]
+    _save_login_attempts(attempts)
+    return attempt
+
+
+def _update_attempt_status(token: str, status: str) -> dict | None:
+    attempts = _load_login_attempts()
+    updated = None
+    for a in attempts:
+        if a.get('token') == token:
+            a['status'] = status
+            a['responded_at'] = datetime.utcnow().isoformat()
+            updated = a
+            break
+    if updated:
+        _save_login_attempts(attempts)
+    return updated
+
+@app.route('/security/login-attempt', methods=['POST'])
+def record_login_attempt():
+    body = request.get_json(force=True, silent=True) or {}
+    email = (body.get('email') or '').strip()
+    if not email:
+        return jsonify({'error': 'email required'}), 400
+    attempt = _create_login_attempt(body)
+    try:
+        subject, body_txt = _compose_login_alert_email(attempt)
+        _send_email(email, subject, body_txt)
+    except Exception as e:
+        # still return attempt but indicate email failed
+        return jsonify({'attemptId': attempt['id'], 'status': attempt['status'], 'emailError': str(e)}), 500
+    return jsonify({'attemptId': attempt['id'], 'status': attempt['status']}), 201
+
+@app.route('/security/login-attempt/confirm', methods=['GET'])
+def confirm_login_attempt():
+    token = request.args.get('token')
+    if not token:
+        return jsonify({'error': 'token required'}), 400
+    updated = _update_attempt_status(token, 'confirmed')
+    if not updated:
+        return jsonify({'error': 'invalid token'}), 404
+    return jsonify({'success': True, 'attempt': updated})
+
+@app.route('/security/login-attempt/report', methods=['GET'])
+def report_login_attempt():
+    token = request.args.get('token')
+    if not token:
+        return jsonify({'error': 'token required'}), 400
+    updated = _update_attempt_status(token, 'reported')
+    if not updated:
+        return jsonify({'error': 'invalid token'}), 404
+    # TODO: add automated responses (invalidate sessions, flag account, force password reset)
+    return jsonify({'success': True, 'attempt': updated})
+
+@app.route('/security/login-attempt/respond', methods=['POST'])
+def respond_login_attempt():
+    body = request.get_json(force=True, silent=True) or {}
+    token = body.get('token')
+    decision = body.get('decision')  # 'confirm' | 'report'
+    if decision not in ('confirm', 'report'):
+        return jsonify({'error': 'decision must be confirm or report'}), 400
+    status = 'confirmed' if decision == 'confirm' else 'reported'
+    updated = _update_attempt_status(token, status)
+    if not updated:
+        return jsonify({'error': 'invalid token'}), 404
+    return jsonify({'success': True, 'attempt': updated})
 
 if __name__ == "__main__":
     app.run(port=5000, debug=True)

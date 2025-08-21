@@ -7,13 +7,75 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
 import { useSecuritySettings } from "@/hooks/useSecuritySettings";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const ProfileSecurity: React.FC = () => {
-  const { features, setFeature, safetyScore } = useSecuritySettings();
   const user = React.useMemo(() => {
     try { return JSON.parse(sessionStorage.getItem("currentUser") || "null"); } catch { return null; }
   }, []);
 
+  const { features, setFeature, safetyScore } = useSecuritySettings();
+  const [phone, setPhone] = React.useState(user?.phone || "");
+  const [otp, setOtp] = React.useState("");
+  const [otpSent, setOtpSent] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  // const sendOtp = async () => {
+  //   setLoading(true);
+  //   try {
+  //     await axios.post("http://localhost:8000/api/send-otp", { phone })
+  //     setOtpSent(true);
+  //   } catch (err) {
+  //     console.error("Error sending OTP", err);
+  //   }
+  //   setLoading(false);
+  // };
+
+  // const verifyOtp = async () => {
+  //   setLoading(true);
+  //   try {
+  //     await axios.post("http://localhost:8000/api/verify-otp", { phone, otp });
+  //     toast({ title: "Verified", description: "Phone number verified successfully!" });
+  //   } catch (err) {
+  //     console.error("Invalid OTP", err);
+  //   }
+  //   setLoading(false);
+  // };
+
+  const [phoneVerified, setPhoneVerified] = React.useState(false);
+
+// On phone change, reset verification:
+const onPhoneChange = (newPhone: string) => {
+  setPhone(newPhone);
+  setPhoneVerified(false);
+  setOtpSent(false);
+  setOtp("");
+};
+
+const sendOtp = async () => {
+  setLoading(true);
+  try {
+    await axios.post("http://localhost:8000/api/send-otp", { phone });
+    setOtpSent(true);
+  } catch (err) {
+    console.error("Error sending OTP", err);
+  }
+  setLoading(false);
+};
+
+const verifyOtp = async () => {
+  setLoading(true);
+  try {
+    await axios.post("http://localhost:8000/api/verify-otp", { phone, otp });
+    toast({ title: "Verified", description: "Phone number verified successfully!" });
+    setPhoneVerified(true);  // Mark as verified
+    setOtpSent(false);      // Hide OTP inputs
+    setOtp("");
+  } catch (err) {
+    console.error("Invalid OTP", err);
+  }
+  setLoading(false);
+};
   useEffect(() => {
     document.title = "Profile & Security — Bank of India";
   }, []);
@@ -66,10 +128,44 @@ const ProfileSecurity: React.FC = () => {
               <Label>Username</Label>
               <Input defaultValue={user?.username || ""} placeholder="username" />
             </div>
-            <div className="space-y-2 md:col-span-2">
-              <Label>Phone</Label>
-              <Input defaultValue={user?.phone || ""} placeholder="Your phone number" />
+                        <div className="space-y-2 md:col-span-2 relative">
+              <Label>Phone Number</Label>
+              <Input
+                type="tel"
+                value={phone}
+                onChange={(e) => onPhoneChange(e.target.value)}
+                placeholder="Enter your phone number"
+              />
+              {phoneVerified && (
+                <span className="absolute right-2 top-9 text-green-600" title="Phone verified">
+                  ✅
+                </span>
+              )}
+
+              {!phoneVerified && (
+                <>
+                  {!otpSent ? (
+                    <Button onClick={sendOtp} disabled={!phone || loading} type="button" className="mt-2">
+                      {loading ? "Sending..." : "Send OTP"}
+                    </Button>
+                  ) : (
+                    <>
+                      <Label>Enter OTP</Label>
+                      <Input
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value)}
+                        placeholder="Enter OTP"
+                      />
+                      <Button onClick={verifyOtp} disabled={!otp || loading} type="button" className="mt-2">
+                        {loading ? "Verifying..." : "Verify OTP"}
+                      </Button>
+                    </>
+                  )}
+                </>
+              )}
             </div>
+
+
             <div className="md:col-span-2 flex items-center justify-between rounded-md border p-3">
               <div>
                 <div className="text-sm font-medium">Enable Biometric Authentication</div>

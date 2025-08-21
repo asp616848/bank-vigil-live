@@ -8,7 +8,7 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 
 // Replace direct JSON access with backend API endpoints
-const ACCOUNTS_API = "http://localhost:5000/accounts";
+const ACCOUNTS_API = "http://localhost:8000/accounts";
 
 type Account = { email: string; password: string; name: string; username: string };
 
@@ -184,7 +184,7 @@ const Login: React.FC = () => {
 
     try {
       // Call verify which auto-enrolls until 3 samples are stored
-      const res = await fetch("http://localhost:5000/typingdna/verify", {
+      const res = await fetch("http://localhost:8000/typingdna/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: email, tp }),
@@ -259,7 +259,7 @@ const Login: React.FC = () => {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/typingdna/verify", {
+      const res = await fetch("http://localhost:8000/typingdna/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: email, tp }),
@@ -294,7 +294,7 @@ const Login: React.FC = () => {
     if (otpCooldown > 0) return; // cooldown active
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/otp/send', {
+      const res = await fetch('http://localhost:8000/otp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -321,7 +321,7 @@ const Login: React.FC = () => {
     }
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/accounts/reset-password', {
+      const res = await fetch('http://localhost:8000/accounts/reset-password', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, newPassword }),
@@ -381,7 +381,7 @@ const Login: React.FC = () => {
         return;
       }
       try {
-        const res = await fetch('http://localhost:5000/otp/verify', {
+        const res = await fetch('http://localhost:8000/otp/verify', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, otp }),

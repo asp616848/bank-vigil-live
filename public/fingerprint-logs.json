@@ -891,5 +891,62 @@
     },
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
     "client_timestamp": "2025-08-11T16:13:00.059Z"
+  },
+  {
+    "timestamp": "2025-08-21T14:29:56.774511",
+    "action": "login_failed_invalid_otp_or_password",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "138.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1755786581301.AaLtsR",
+      "timestamp": 1755786581380
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-21T14:29:56.758Z"
+  },
+  {
+    "timestamp": "2025-08-21T14:30:18.145477",
+    "action": "login_failed_invalid_otp_or_password",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "138.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1755786581301.AaLtsR",
+      "timestamp": 1755786581380
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-21T14:30:18.135Z"
+  },
+  {
+    "timestamp": "2025-08-21T14:30:31.579948",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "138.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1755786581301.AaLtsR",
+      "timestamp": 1755786581380
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-08-21T14:30:31.570Z"
   }
 ]

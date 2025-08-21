@@ -214,6 +214,38 @@ def _update_account_password(email: str, new_password: str) -> bool:
     return False
 
 
+def _update_account_phone(email: str, phone: str) -> bool:
+    """Update or insert the 'phone' field for the account identified by email.
+    Tries new-accounts.json first, then old-accounts.json. Returns True if updated.
+    """
+    email_l = (email or "").lower()
+
+    # Try updating in new-accounts.json first
+    new_accounts = _read_accounts_file(NEW_ACCOUNTS_PATH)
+    updated = False
+    for acc in new_accounts:
+        if (acc.get("email") or "").lower() == email_l:
+            acc["phone"] = phone
+            updated = True
+            break
+    if updated:
+        _write_accounts_file(NEW_ACCOUNTS_PATH, new_accounts)
+        return True
+
+    # Then try old-accounts.json
+    old_accounts = _read_accounts_file(OLD_ACCOUNTS_PATH)
+    for acc in old_accounts:
+        if (acc.get("email") or "").lower() == email_l:
+            acc["phone"] = phone
+            updated = True
+            break
+    if updated:
+        _write_accounts_file(OLD_ACCOUNTS_PATH, old_accounts)
+        return True
+
+    return False
+
+
 @app.route('/accounts/reset-password', methods=['POST'])
 def reset_password():
     body = request.get_json(force=True, silent=True) or {}
@@ -246,14 +278,20 @@ def send_phone_otp():
 
 @app.route("/api/verify-otp", methods=["POST"])
 def verify_phone_otp():
-    phone = request.json.get("phone")
-    otp = request.json.get("otp")
+    body = request.get_json(force=True, silent=True) or {}
+    phone = (body.get("phone") or "").strip()
+    otp = (body.get("otp") or "").strip()
+    email = (body.get("email") or "").strip()
     if not phone or not otp:
         return jsonify({"error": "Phone and OTP required"}), 400
     if otp_store.get(phone) == otp:
         # Optionally, delete OTP after successful verification
         otp_store.pop(phone, None)
-        return jsonify({"message": "Verified"})
+        # Persist phone to account if we have the email
+        updated = False
+        if email:
+            updated = _update_account_phone(email, phone)
+        return jsonify({"message": "Verified", "updated": updated, "phone": phone})
     return jsonify({"error": "Invalid OTP"}), 400
 
 def b64encode_bytes(data: bytes) -> str:

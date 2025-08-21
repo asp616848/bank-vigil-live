@@ -42,7 +42,7 @@ const ProfileSecurity: React.FC = () => {
   //   setLoading(false);
   // };
 
-  const [phoneVerified, setPhoneVerified] = React.useState(false);
+  const [phoneVerified, setPhoneVerified] = React.useState(Boolean(user?.phone));
 
 // On phone change, reset verification:
 const onPhoneChange = (newPhone: string) => {
@@ -66,8 +66,13 @@ const sendOtp = async () => {
 const verifyOtp = async () => {
   setLoading(true);
   try {
-    await axios.post("http://localhost:8000/api/verify-otp", { phone, otp });
+    await axios.post("http://localhost:8000/api/verify-otp", { phone, otp, email: user?.email });
     toast({ title: "Verified", description: "Phone number verified successfully!" });
+    // Persist in session so it shows on refresh/relogin
+    try {
+      const updatedUser = { ...(user || {}), phone };
+      sessionStorage.setItem("currentUser", JSON.stringify(updatedUser));
+    } catch {}
     setPhoneVerified(true);  // Mark as verified
     setOtpSent(false);      // Hide OTP inputs
     setOtp("");
@@ -78,6 +83,14 @@ const verifyOtp = async () => {
 };
   useEffect(() => {
     document.title = "Profile & Security — Bank of India";
+    // On refresh, ensure phone reflects session user if present
+    try {
+      const u = JSON.parse(sessionStorage.getItem("currentUser") || "null");
+      if (u?.phone) {
+        setPhone(u.phone);
+        setPhoneVerified(true);
+      }
+    } catch {}
   }, []);
 
   const handleSave = (e: React.FormEvent) => {

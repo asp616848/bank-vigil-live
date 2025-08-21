@@ -367,7 +367,7 @@ const Login: React.FC = () => {
 
     if (loginStep === 'password' && !forgotMode) {
       if (password === found.password) {
-        sessionStorage.setItem("currentUser", JSON.stringify({ email: found.email, name: found.name, username: found.username }));
+        sessionStorage.setItem("currentUser", JSON.stringify({ email: found.email, name: found.name, username: found.username, phone: (found as any).phone }));
         toast({ title: "Welcome back!", description: `Signed in as ${found.name}` });
         setTimeout(() => navigate("/app/dashboard"), 400);
       } else {
@@ -388,7 +388,7 @@ const Login: React.FC = () => {
         });
         const data = await res.json();
         if (res.ok && data.valid && password === found.password) {
-          sessionStorage.setItem("currentUser", JSON.stringify({ email: found.email, name: found.name, username: found.username }));
+          sessionStorage.setItem("currentUser", JSON.stringify({ email: found.email, name: found.name, username: found.username, phone: (found as any).phone }));
           toast({ title: "Welcome back!", description: `Signed in via OTP as ${found.name}` });
           setTimeout(() => navigate("/app/dashboard"), 400);
         } else {

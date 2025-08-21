@@ -12,13 +12,18 @@ from datetime import datetime
 from email.message import EmailMessage
 import smtplib, ssl, uuid, secrets
 
+# Import OTP helpers
+from otp_service import (
+    create_and_send_otp,
+    verify_otp,
+    create_and_store_phone_otp,
+    verify_phone_otp,
+)
 # WebAuthn / FIDO2
 from fido2.server import Fido2Server
 from fido2.webauthn import PublicKeyCredentialRpEntity
 from fido2 import cbor
 
-# OTP helpers implemented by you
-from otp_service import create_and_send_otp, verify_otp
 
 load_dotenv()
 app = Flask(__name__)
@@ -86,10 +91,36 @@ def _load_all_accounts():
             merged[email] = acc  # old overrides new
     return list(merged.values())
 
+  
+def _update_account_phone(email: str, phone_e164: str) -> bool:
+    """Add or update the phone field for the account with this email.
+    Prefer updating in the file where the account exists; if present in both, old overrides new.
+    """
+    email_l = (email or "").lower()
+    # Try new accounts first
+    new_accounts = _read_accounts_file(NEW_ACCOUNTS_PATH)
+    updated = False
+    for acc in new_accounts:
+        if (acc.get("email") or "").lower() == email_l:
+            acc["phone"] = phone_e164
+            updated = True
+            break
+    if updated:
+        _write_accounts_file(NEW_ACCOUNTS_PATH, new_accounts)
+        return True
 
-# -----------------------------
-# Accounts CRUD (from main)
-# -----------------------------
+    # Then old accounts
+    old_accounts = _read_accounts_file(OLD_ACCOUNTS_PATH)
+    for acc in old_accounts:
+        if (acc.get("email") or "").lower() == email_l:
+            acc["phone"] = phone_e164
+            updated = True
+            break
+    if updated:
+        _write_accounts_file(OLD_ACCOUNTS_PATH, old_accounts)
+        return True
+
+    return False
 @app.route("/accounts", methods=["GET", "POST"])
 def accounts():
     if request.method == "GET":
@@ -143,9 +174,40 @@ def otp_verify():
     return jsonify({"valid": ok}), (200 if ok else 401)
 
 
-# -----------------------------
-# TypingDNA (from main)
-# -----------------------------
+@app.route('/phone/send-otp', methods=['POST'])
+def phone_send_otp():
+    body = request.get_json(force=True, silent=True) or {}
+    email = (body.get('email') or '').strip()
+    phone = (body.get('phone') or '').strip()
+    if not email or not phone:
+        return jsonify({"error": "Email and phone are required"}), 400
+    # Basic E.164 validation: + followed by 8-15 digits
+    if not phone.startswith('+') or not phone[1:].isdigit() or not (8 <= len(phone[1:]) <= 15):
+        return jsonify({"error": "Invalid phone format"}), 400
+    try:
+        # Create phone OTP and print to backend console
+        create_and_store_phone_otp(email, phone)
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/phone/verify-otp', methods=['POST'])
+def phone_verify_otp():
+    body = request.get_json(force=True, silent=True) or {}
+    email = (body.get('email') or '').strip()
+    otp = (body.get('otp') or '').strip()
+    if not email or not otp:
+        return jsonify({"error": "Email and OTP are required"}), 400
+    ok, phone_e164 = verify_phone_otp(email, otp)
+    if not ok or not phone_e164:
+        return jsonify({"valid": False}), 401
+    # Persist phone on the account
+    if not _update_account_phone(email, phone_e164):
+        return jsonify({"error": "Account not found"}), 404
+    return jsonify({"valid": True, "phone": phone_e164})
+
+
 @app.route("/typingdna/verify", methods=["POST"])
 def verify_typing():
     data = request.get_json() or {}

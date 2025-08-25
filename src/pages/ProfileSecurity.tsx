@@ -23,11 +23,7 @@ const ProfileSecurity: React.FC = () => {
   const [existingPhone, setExistingPhone] = useState<string | undefined>(() => user?.phone as string | undefined);
   const [isEditingPhone, setIsEditingPhone] = useState<boolean>(false);
 
-  const { features, setFeature, safetyScore } = useSecuritySettings();
   const [phone, setPhone] = React.useState(user?.phone || "");
-  const [otp, setOtp] = React.useState("");
-  const [otpSent, setOtpSent] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
 
   // const sendOtp = async () => {
   //   setLoading(true);

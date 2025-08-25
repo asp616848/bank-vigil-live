@@ -1062,5 +1062,62 @@
     },
     "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
     "client_timestamp": "2025-08-21T18:11:37.562Z"
+  },
+  {
+    "timestamp": "2025-08-25T14:02:06.424904",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "U7vfXZ2N2p067WasoZ00",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome Mobile",
+        "browserVersion": "139.0.0",
+        "os": "Android",
+        "osVersion": "10"
+      },
+      "requestId": "1756130439195.WZQKf8",
+      "timestamp": 1756130521510
+    },
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+    "client_timestamp": "2025-08-25T14:02:06.876Z"
+  },
+  {
+    "timestamp": "2025-08-25T14:02:08.639706",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "U7vfXZ2N2p067WasoZ00",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome Mobile",
+        "browserVersion": "139.0.0",
+        "os": "Android",
+        "osVersion": "10"
+      },
+      "requestId": "1756130439195.WZQKf8",
+      "timestamp": 1756130521510
+    },
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+    "client_timestamp": "2025-08-25T14:02:09.105Z"
+  },
+  {
+    "timestamp": "2025-08-25T14:02:26.895268",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "U7vfXZ2N2p067WasoZ00",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome Mobile",
+        "browserVersion": "139.0.0",
+        "os": "Android",
+        "osVersion": "10"
+      },
+      "requestId": "1756130439195.WZQKf8",
+      "timestamp": 1756130521510
+    },
+    "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
+    "client_timestamp": "2025-08-25T14:02:27.363Z"
   }
 ]

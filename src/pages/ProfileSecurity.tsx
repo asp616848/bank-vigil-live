@@ -60,7 +60,12 @@ const onPhoneChange = (newPhone: string) => {
 const sendOtp = async () => {
   setLoading(true);
   try {
-    await axios.post("http://localhost:8000/api/send-otp", { phone });
+    const res = await fetch("http://localhost:8000/api/send-otp", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone })
+    });
+    if (!res.ok) throw new Error('Failed to send OTP');
     setOtpSent(true);
   } catch (err) {
     console.error("Error sending OTP", err);
@@ -71,7 +76,12 @@ const sendOtp = async () => {
 const verifyOtp = async () => {
   setLoading(true);
   try {
-    await axios.post("http://localhost:8000/api/verify-otp", { phone, otp });
+    const res = await fetch("http://localhost:8000/api/verify-otp", {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, otp })
+    });
+    if (!res.ok) throw new Error('Invalid OTP');
     toast({ title: "Verified", description: "Phone number verified successfully!" });
     setPhoneVerified(true);  // Mark as verified
     setOtpSent(false);      // Hide OTP inputs
@@ -224,13 +234,19 @@ const verifyOtp = async () => {
           </div>
         </div>
       </header>
-
-      <Card>
+  <Card>
         <CardHeader>
           <CardTitle className="text-sm">Profile</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSave} className="grid gap-4 md:grid-cols-2">
+            <div className="md:col-span-2 flex items-center justify-between rounded-md border p-3">
+              <div>
+                <div className="text-sm font-medium">Require biometrics</div>
+                <div className="text-xs text-muted-foreground">When on, pages blur until you verify biometrics.</div>
+              </div>
+              <Switch checked={features.biometric} onCheckedChange={(v) => setFeature('biometric', v)} />
+            </div>
             <div className="space-y-2">
               <Label>Full Name</Label>
               <Input defaultValue={user?.name || ""} placeholder="Your name" />

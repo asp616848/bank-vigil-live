@@ -1119,5 +1119,384 @@
     },
     "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Mobile Safari/537.36",
     "client_timestamp": "2025-08-25T14:02:27.363Z"
+  },
+  {
+    "timestamp": "2025-09-02T06:05:11.006762",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756792632944.GKubp4",
+      "timestamp": 1756793100781,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:05:11.000Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:05:12.816829",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756792632944.GKubp4",
+      "timestamp": 1756793100781,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:05:12.815Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:05:58.175487",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756792632944.GKubp4",
+      "timestamp": 1756793100781,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:05:58.167Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:06:49.026799",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756792632944.GKubp4",
+      "timestamp": 1756793163030,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:06:49.015Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:06:50.955839",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756792632944.GKubp4",
+      "timestamp": 1756793163030,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:06:50.953Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:07:13.137637",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756792632944.GKubp4",
+      "timestamp": 1756793163030,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:07:13.131Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:18:03.692363",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756792632944.GKubp4",
+      "timestamp": 1756793869259,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:18:03.680Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:21:01.139602",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756794042351,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:21:01.129Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:22:07.188112",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756794084105,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:21:38.366Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:22:07.191113",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756794084105,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:22:07.186Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:22:09.533972",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756794084105,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:22:09.532Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:22:10.618641",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756794084105,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:22:10.616Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:22:12.040739",
+    "action": "biometric_verification_success",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756794084105,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:22:12.039Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:22:12.098149",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756794084105,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:22:12.096Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:22:12.515418",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756794084105,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:22:12.511Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:22:32.302765",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756794084105,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:22:32.299Z",
+    "ip": "127.0.0.1",
+    "coords": null
   }
 ]

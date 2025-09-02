@@ -12,6 +12,8 @@ export interface FingerprintData {
   };
   requestId: string;
   timestamp: number;
+  ip?: string;
+  coords?: { lat: number; lon: number; accuracy?: number };
 }
 
 export const useFingerprint = () => {
@@ -23,8 +25,10 @@ export const useFingerprint = () => {
   const [fingerprintData, setFingerprintData] = useState<FingerprintData | null>(null);
 
   useEffect(() => {
-    if (data && !error) {
-      const fingerprintInfo: FingerprintData = {
+    let cancelled = false;
+    const enrich = async () => {
+      if (!data || error) return;
+      const base: FingerprintData = {
         visitorId: data.visitorId,
         confidence: data.confidence?.score || 0,
         browserDetails: {
@@ -36,8 +40,39 @@ export const useFingerprint = () => {
         requestId: data.requestId,
         timestamp: Date.now(),
       };
-      setFingerprintData(fingerprintInfo);
-    }
+      try {
+        // Get server-observed IP (no external calls)
+        const res = await fetch('http://localhost:8000/whoami');
+        if (res.ok) {
+          const info = await res.json();
+          base.ip = info?.ip;
+        }
+      } catch {}
+      // Try browser geolocation (user permission required)
+      try {
+        if (navigator.geolocation) {
+          await new Promise<void>((resolve) => {
+            navigator.geolocation.getCurrentPosition(
+              (pos) => {
+                if (!cancelled) {
+                  base.coords = {
+                    lat: pos.coords.latitude,
+                    lon: pos.coords.longitude,
+                    accuracy: pos.coords.accuracy,
+                  };
+                }
+                resolve();
+              },
+              () => resolve(),
+              { maximumAge: 60000, timeout: 5000, enableHighAccuracy: false }
+            );
+          });
+        }
+      } catch {}
+      if (!cancelled) setFingerprintData(base);
+    };
+    enrich();
+    return () => { cancelled = true; };
   }, [data, error]);
 
   const refreshFingerprint = async () => {
@@ -57,11 +92,12 @@ export const useFingerprint = () => {
       fingerprint: fingerprintData,
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
+  coords: fingerprintData.coords
     };
 
     try {
       // Send to your backend for security logging
-      await fetch('http://localhost:5000/security/log-fingerprint', {
+  await fetch('http://localhost:8000/security/log-fingerprint', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(securityLog),

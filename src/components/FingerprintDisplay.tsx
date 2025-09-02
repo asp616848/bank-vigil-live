@@ -75,6 +75,20 @@ const FingerprintDisplay: React.FC = () => {
             </div>
 
             <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">IP Address:</span>
+              <Badge variant="secondary" className="font-mono text-xs">
+                {fingerprintData.ip || 'N/A'}
+              </Badge>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-medium">Coordinates:</span>
+              <span className="text-xs font-mono text-gray-600">
+                {fingerprintData.coords ? `${fingerprintData.coords.lat.toFixed(5)}, ${fingerprintData.coords.lon.toFixed(5)}${fingerprintData.coords.accuracy ? ` (±${Math.round(fingerprintData.coords.accuracy)}m)` : ''}` : 'Permission not granted'}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Request ID:</span>
               <span className="text-xs font-mono text-gray-600">
                 {fingerprintData.requestId}

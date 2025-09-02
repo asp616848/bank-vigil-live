@@ -450,7 +450,11 @@ def log_fingerprint():
             "email": data.get('email'),
             "fingerprint": data.get('fingerprint'),
             "user_agent": data.get('userAgent'),
-            "client_timestamp": data.get('timestamp')
+            "client_timestamp": data.get('timestamp'),
+            # capture server-observed ip; prefer X-Forwarded-For if behind proxy
+            "ip": request.headers.get('X-Forwarded-For', request.remote_addr),
+            # optional client-provided coordinates
+            "coords": data.get('coords')
         }
         
         logs = []
@@ -474,6 +478,18 @@ def log_fingerprint():
     except Exception as e:
         print(f"Error logging fingerprint: {e}")
         return jsonify({"error": "Failed to log fingerprint"}), 500
+
+@app.route('/whoami', methods=['GET'])
+def whoami():
+    """Return basic request info such as IP and user agent."""
+    try:
+        ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        return jsonify({
+            "ip": ip,
+            "user_agent": request.headers.get('User-Agent')
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/security/fingerprint-logs', methods=['GET'])
 def get_fingerprint_logs():

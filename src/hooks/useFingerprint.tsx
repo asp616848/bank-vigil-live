@@ -83,6 +83,29 @@ export const useFingerprint = () => {
     }
   };
 
+  const refreshCoords = async (): Promise<FingerprintData['coords'] | undefined> => {
+    try {
+      if (!navigator.geolocation) return undefined;
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          { maximumAge: 0, timeout: 8000, enableHighAccuracy: true }
+        );
+      });
+      const coords = {
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+        accuracy: position.coords.accuracy,
+      } as const;
+      setFingerprintData(prev => prev ? { ...prev, coords } : prev);
+      return coords;
+    } catch (e) {
+      console.warn('Geolocation refresh failed', e);
+      return undefined;
+    }
+  };
+
   const logFingerprintForSecurity = async (action: string, email?: string) => {
     if (!fingerprintData) return;
 
@@ -112,6 +135,7 @@ export const useFingerprint = () => {
     error,
     fingerprintData,
     refreshFingerprint,
+  refreshCoords,
     logFingerprintForSecurity,
     rawData: data,
   };

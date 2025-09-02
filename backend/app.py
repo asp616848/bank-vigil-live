@@ -11,6 +11,7 @@ from base64 import urlsafe_b64encode, urlsafe_b64decode
 from datetime import datetime
 from email.message import EmailMessage
 import smtplib, ssl, uuid, secrets
+import math
 
 # Import OTP helpers
 from otp_service import (
@@ -59,6 +60,7 @@ OLD_ACCOUNTS_PATH = PUBLIC_DIR / "old-accounts.json"
 NEW_ACCOUNTS_PATH = PUBLIC_DIR / "new-accounts.json"
 FINGERPRINT_LOGS_PATH = PUBLIC_DIR / "fingerprint-logs.json"
 LOGIN_ATTEMPTS_PATH = BASE_DIR / "login_attempts.json"
+LAST_LOCATIONS_PATH = BASE_DIR / "last_locations.json"
 
 def _read_accounts_file(path: Path):
     try:
@@ -672,7 +674,113 @@ def respond_login_attempt():
 
 
 # -----------------------------
+# Location tracking and alerts
+# -----------------------------
+def _load_last_locations() -> dict:
+    if not LAST_LOCATIONS_PATH.exists():
+        return {}
+    try:
+        with LAST_LOCATIONS_PATH.open('r', encoding='utf-8') as f:
+            data = json.load(f)
+            return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+def _save_last_locations(data: dict):
+    LAST_LOCATIONS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with LAST_LOCATIONS_PATH.open('w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Great-circle distance between two points on Earth (km)."""
+    R = 6371.0  # km
+    phi1 = math.radians(lat1)
+    phi2 = math.radians(lat2)
+    dphi = math.radians(lat2 - lat1)
+    dlambda = math.radians(lon2 - lon1)
+    a = math.sin(dphi/2)**2 + math.cos(phi1) * math.cos(phi2) * math.sin(dlambda/2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+    return R * c
+
+@app.route('/security/location-check', methods=['POST'])
+def security_location_check():
+    """Store user's last known location and alert via email if the new login is far away.
+
+    Request JSON: { email: str, coords: { lat: number, lon: number, accuracy?: number }, timestamp?: str }
+    Response JSON: { success: true, alert: bool, distanceKm?: number, prev?: {...}, saved: {...} }
+    """
+    body = request.get_json(force=True, silent=True) or {}
+    email = (body.get('email') or '').strip().lower()
+    coords = body.get('coords') or {}
+    ts = body.get('timestamp') or datetime.utcnow().isoformat()
+    try:
+        lat = float(coords.get('lat'))
+        lon = float(coords.get('lon'))
+    except Exception:
+        return jsonify({"error": "Valid coords.lat and coords.lon required"}), 400
+
+    # Load and compare with previous
+    store = _load_last_locations()
+    prev = store.get(email)
+    distance_km = None
+    alert = False
+    threshold_km = float(os.getenv('LOCATION_ALERT_KM', '100'))  # configurable; default 100km
+
+    if prev and 'lat' in prev and 'lon' in prev:
+        try:
+            distance_km = _haversine_km(float(prev['lat']), float(prev['lon']), lat, lon)
+            if distance_km > threshold_km:
+                alert = True
+        except Exception:
+            distance_km = None
+
+    # Save current as last known
+    store[email] = {
+        'lat': lat,
+        'lon': lon,
+        'accuracy': coords.get('accuracy'),
+        'timestamp': ts,
+    }
+    _save_last_locations(store)
+
+    # If drastic change, email the user
+    if alert and email:
+        try:
+            subject = "Security alert: New login location detected"
+            lines = [
+                f"We noticed a login from a new location.",
+                "",
+                f"Previous location: lat={prev.get('lat')}, lon={prev.get('lon')} at {prev.get('timestamp')}",
+                f"New location: lat={lat}, lon={lon} at {ts}",
+                f"Approx distance: {distance_km:.1f} km",
+                "",
+                "If this was you, no action is needed.",
+                "If you don't recognize this, please secure your account by changing your password and enabling MFA.",
+            ]
+            _send_email(email, subject, "\n".join(lines))
+        except Exception as e:
+            # Don't fail the request if email sending fails; include error for visibility
+            return jsonify({
+                'success': True,
+                'alert': True,
+                'distanceKm': distance_km,
+                'prev': prev,
+                'saved': store.get(email),
+                'emailError': str(e),
+            })
+
+    return jsonify({
+        'success': True,
+        'alert': alert,
+        'distanceKm': distance_km,
+        'prev': prev,
+        'saved': store.get(email),
+    })
+
+
+# -----------------------------
 # App runner
 # -----------------------------
+
 if __name__ == "__main__":
     app.run(port=8000, debug=True)

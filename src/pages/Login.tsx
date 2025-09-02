@@ -24,7 +24,7 @@ const passwordValid = (pwd: string) => {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { isLoading: fingerprintLoading, fingerprintData, logFingerprintForSecurity, refreshFingerprint } = useFingerprint();
+  const { isLoading: fingerprintLoading, fingerprintData, logFingerprintForSecurity, refreshFingerprint, refreshCoords } = useFingerprint();
   const [mode, setMode] = useState<"login" | "create" | "enroll">("login");
   const [loginStep, setLoginStep] = useState<"email" | "captcha" | "password" | "otp">("email");
   const [isEmailLocked, setIsEmailLocked] = useState(false);
@@ -504,6 +504,28 @@ const Login: React.FC = () => {
     if (loginStep === 'password' && !forgotMode) {
     if (password === found.password) {
         await logFingerprintForSecurity('login_success', email);
+        // Store and check location drift (non-blocking)
+        try {
+          const res = await fetch('http://localhost:8000/security/location-check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email,
+              coords: fingerprintData?.coords,
+              timestamp: new Date().toISOString(),
+            }),
+          });
+          const loc = await res.json();
+          if (res.ok && loc.alert) {
+            toast({
+              title: 'New login location detected',
+              description: `Distance from last login ~${(loc.distanceKm || 0).toFixed(0)} km. We\'ve sent you an email alert.`,
+              variant: 'destructive',
+            });
+          }
+        } catch (e) {
+          // ignore
+        }
         sessionStorage.setItem("currentUser", JSON.stringify({ 
           email: found.email, 
           name: found.name, 
@@ -533,6 +555,28 @@ const Login: React.FC = () => {
         const data = await res.json();
     if (res.ok && data.valid && password === found.password) {
           await logFingerprintForSecurity('login_success_via_otp', email);
+          // Store and check location drift (non-blocking)
+          try {
+            const r2 = await fetch('http://localhost:8000/security/location-check', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email,
+                coords: fingerprintData?.coords,
+                timestamp: new Date().toISOString(),
+              }),
+            });
+            const d2 = await r2.json();
+            if (r2.ok && d2.alert) {
+              toast({
+                title: 'New login location detected',
+                description: `Distance from last login ~${(d2.distanceKm || 0).toFixed(0)} km. We\'ve sent you an email alert.`,
+                variant: 'destructive',
+              });
+            }
+          } catch (e) {
+            // ignore
+          }
           sessionStorage.setItem("currentUser", JSON.stringify({ 
             email: found.email, 
             name: found.name, 

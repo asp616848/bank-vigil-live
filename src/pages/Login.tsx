@@ -24,9 +24,9 @@ const passwordValid = (pwd: string) => {
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { isLoading: fingerprintLoading, fingerprintData, logFingerprintForSecurity, refreshFingerprint } = useFingerprint();
+  const { isLoading: fingerprintLoading, fingerprintData, logFingerprintForSecurity, refreshFingerprint, refreshCoords } = useFingerprint();
   const [mode, setMode] = useState<"login" | "create" | "enroll">("login");
-  const [loginStep, setLoginStep] = useState<"email" | "password" | "otp">("email");
+  const [loginStep, setLoginStep] = useState<"email" | "captcha" | "password" | "otp">("email");
   const [isEmailLocked, setIsEmailLocked] = useState(false);
   const [otp, setOtp] = useState("");
   const [email, setEmail] = useState("");
@@ -47,6 +47,19 @@ const Login: React.FC = () => {
   const [enrollEmail, setEnrollEmail] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  // Captcha for new users
+  const [captchaValue, setCaptchaValue] = useState("");
+  const [captchaQuestion, setCaptchaQuestion] = useState<string>("");
+  // Force captcha for specific users (from public/new-accounts.json)
+  const [newAccountEmails, setNewAccountEmails] = useState<string[]>([]);
+  const [captchaMode, setCaptchaMode] = useState<'signup' | 'login'>('signup');
+
+  const generateCaptcha = () => {
+    const a = Math.floor(Math.random() * 10 + 1);
+    const b = Math.floor(Math.random() * 10 + 1);
+    setCaptchaQuestion(`What is ${a} + ${b}?`);
+    setCaptchaValue("");
+  };
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -82,6 +95,8 @@ const Login: React.FC = () => {
     setOtpCooldown(0);
     setForgotMode(false);
     setNewPassword("");
+  setCaptchaValue("");
+  setCaptchaQuestion("");
   };
 
   useEffect(() => {
@@ -96,7 +111,27 @@ const Login: React.FC = () => {
         toast({ title: "Error", description: "Could not load accounts from server.", variant: "destructive" });
       }
     };
+    const loadNewAccounts = async () => {
+      try {
+        const res = await fetch("/new-accounts.json", { cache: 'no-store' });
+        if (!res.ok) return; // non-fatal
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setNewAccountEmails(
+            data
+              .map((x: any) => (typeof x?.email === 'string' ? x.email.toLowerCase() : null))
+              .filter((x: string | null): x is string => !!x)
+          );
+        }
+      } catch (e) {
+        // Non-blocking if this fails
+        console.warn('Could not load new-accounts.json', e);
+      }
+    };
     loadAccounts();
+    loadNewAccounts();
+    // init captcha question
+    generateCaptcha();
   }, []);
 
   const saveNewAccount = async (account: Account): Promise<boolean> => {
@@ -188,6 +223,15 @@ const Login: React.FC = () => {
       return;
     }
 
+    // If this email is flagged as a new account, enforce captcha on every login
+    if (newAccountEmails.includes(email.toLowerCase())) {
+      setCaptchaMode('login');
+      generateCaptcha();
+      setLoginStep('captcha');
+      setLoading(false);
+      return;
+    }
+
     let tp = "";
     try {
       tp = tdnaRef.current.getTypingPattern({ type: 0, text: email });
@@ -243,6 +287,63 @@ const Login: React.FC = () => {
     
     if (loginStep === 'email') {
       await handleEmailVerification();
+    } else if (loginStep === 'captcha') {
+      // validate captcha
+      const m = captchaQuestion.match(/(\d+) \+ (\d+)/);
+      const correct = m ? Number(m[1]) + Number(m[2]) : NaN;
+      if (Number(captchaValue) === correct) {
+        if (captchaMode === 'signup') {
+          // Captcha passed: move to account creation flow (since email is new)
+          setMode('create');
+          setLoginStep('email');
+          toast({ title: 'Captcha passed', description: 'Please complete account details to sign up.' });
+        } else {
+          // Captcha for login passed: proceed with biometric verification flow
+          if (!isTypingDNAReady) {
+            toast({ title: "Please wait", description: "Biometrics are initializing.", variant: "destructive" });
+            return;
+          }
+          let tp = "";
+          try {
+            tp = tdnaRef.current.getTypingPattern({ type: 0, text: email });
+          } catch (err: any) {
+            toast({ title: "Capture failed", description: err?.message || "Could not capture typing pattern.", variant: "destructive" });
+            return;
+          }
+          try {
+            const res = await fetch("http://localhost:8000/typingdna/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ userId: email, tp }),
+            });
+            const data = await res.json();
+
+            if ((data.status === 'verified' && data.details?.result === 1) || data.status === 'enrolled') {
+              await logFingerprintForSecurity('biometric_verification_success', email);
+              toast({ title: "Biometric Scan Passed", description: "Please enter your password." });
+              setLoginStep("password");
+              setIsEmailLocked(true);
+              setOtpSent(false);
+              setForgotMode(false);
+            } else {
+              await logFingerprintForSecurity('biometric_verification_failed', email);
+              toast({
+                title: "Biometric Mismatch",
+                description: "Typing pattern has changed. Please provide both password and OTP.",
+                variant: "destructive",
+              });
+              setLoginStep("otp");
+              setIsEmailLocked(true);
+              setOtpSent(false);
+              setForgotMode(false);
+            }
+          } catch (error: any) {
+            toast({ title: "Error", description: error.message || "An unexpected error occurred.", variant: "destructive" });
+          }
+        }
+      } else {
+        toast({ title: 'Incorrect answer', description: 'Please solve the captcha to continue.', variant: 'destructive' });
+      }
     } else {
       await handlePasswordOrOtpVerification();
     }
@@ -262,11 +363,23 @@ const Login: React.FC = () => {
 
     const found = accounts.find((a) => a.email.toLowerCase() === email.toLowerCase());
     if (!found) {
-      await logFingerprintForSecurity('login_attempt_failed_email_not_found', email);
-      toast({ title: "Invalid credentials", description: "This email is not registered.", variant: "destructive" });
+  // Unknown email: show captcha before allowing create flow
+  setCaptchaMode('signup');
+  generateCaptcha();
+      setLoginStep("captcha");
       setLoading(false);
       return;
     }
+
+    // Known email but flagged as "new account" must solve captcha on every login
+    if (newAccountEmails.includes(email.toLowerCase())) {
+      setCaptchaMode('login');
+      generateCaptcha();
+      setLoginStep('captcha');
+      setLoading(false);
+      return;
+    }
+
 
     let tp = "";
     try {
@@ -377,6 +490,7 @@ const Login: React.FC = () => {
   };
 
   const handlePasswordOrOtpVerification = async () => {
+
     setLoading(true);
     const found = accounts.find((a) => a.email.toLowerCase() === email.toLowerCase());
 
@@ -390,6 +504,28 @@ const Login: React.FC = () => {
     if (loginStep === 'password' && !forgotMode) {
     if (password === found.password) {
         await logFingerprintForSecurity('login_success', email);
+        // Store and check location drift (non-blocking)
+        try {
+          const res = await fetch('http://localhost:8000/security/location-check', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email,
+              coords: fingerprintData?.coords,
+              timestamp: new Date().toISOString(),
+            }),
+          });
+          const loc = await res.json();
+          if (res.ok && loc.alert) {
+            toast({
+              title: 'New login location detected',
+              description: `Distance from last login ~${(loc.distanceKm || 0).toFixed(0)} km. We\'ve sent you an email alert.`,
+              variant: 'destructive',
+            });
+          }
+        } catch (e) {
+          // ignore
+        }
         sessionStorage.setItem("currentUser", JSON.stringify({ 
           email: found.email, 
           name: found.name, 
@@ -419,6 +555,28 @@ const Login: React.FC = () => {
         const data = await res.json();
     if (res.ok && data.valid && password === found.password) {
           await logFingerprintForSecurity('login_success_via_otp', email);
+          // Store and check location drift (non-blocking)
+          try {
+            const r2 = await fetch('http://localhost:8000/security/location-check', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email,
+                coords: fingerprintData?.coords,
+                timestamp: new Date().toISOString(),
+              }),
+            });
+            const d2 = await r2.json();
+            if (r2.ok && d2.alert) {
+              toast({
+                title: 'New login location detected',
+                description: `Distance from last login ~${(d2.distanceKm || 0).toFixed(0)} km. We\'ve sent you an email alert.`,
+                variant: 'destructive',
+              });
+            }
+          } catch (e) {
+            // ignore
+          }
           sessionStorage.setItem("currentUser", JSON.stringify({ 
             email: found.email, 
             name: found.name, 
@@ -442,7 +600,7 @@ const Login: React.FC = () => {
   };
 
   const renderForm = () => {
-    if (mode === 'enroll') {
+  if (mode === 'enroll') {
       return (
         <form onSubmit={handleEnrollment} className="space-y-4">
           <header className="text-center mb-6">
@@ -462,6 +620,29 @@ const Login: React.FC = () => {
           </Button>
            <div className="mt-4 text-center text-sm">
             <button type="button" className="text-primary underline" onClick={() => { setMode("login"); resetLoginState(); setEnrollEmail(""); setEnrollmentStep(1); }}>Cancel</button>
+          </div>
+        </form>
+      );
+    }
+
+    // Captcha step UI
+    if (loginStep === 'captcha') {
+      return (
+        <form onSubmit={handleLogin} className="space-y-4">
+          <header className="text-center mb-6">
+            <h1 className="font-display text-2xl font-bold">Are you human?</h1>
+            <p className="text-sm text-muted-foreground">Solve the captcha to continue.</p>
+          </header>
+          <div className="space-y-2">
+            <Label>Captcha</Label>
+            <div className="text-sm p-3 rounded-md bg-muted/40 border">{captchaQuestion}</div>
+            <Input value={captchaValue} onChange={(e) => setCaptchaValue(e.target.value)} placeholder="Enter answer" />
+          </div>
+          <Button disabled={loading} type="submit" className="w-full hover-scale">
+            {loading ? <Loader2 className="animate-spin" /> : 'Continue'}
+          </Button>
+          <div className="mt-2 text-center text-xs">
+            <button type="button" className="underline text-primary" onClick={() => { setMode('login'); resetLoginState(); }}>Back</button>
           </div>
         </form>
       );

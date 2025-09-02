@@ -1,26 +1,8 @@
 [
   {
-    "email": "kong01@gmail.com",
-    "password": "kong01@23",
-    "name": "king kong",
-    "username": "king"
-  },
-  {
-    "email": "abhijeet.s.ug23@plaksha.edu.in",
-    "password": "hola@123",
-    "name": "abhijee",
-    "username": "asp"
-  },
-  {
-    "email": "tisha.bhavsar.ug23@plaksha.edu.in",
-    "password": "niyati@1234",
-    "name": "Tisha Bhavsar",
-    "username": "tishabhavsar"
-  },
-  {
     "email": "asp616848@gmail.com",
-    "password": "abhi123$$$",
-    "name": "Abhi",
-    "username": "asp616848"
+    "password": "$abhi123$",
+    "name": "Abhijeet",
+    "username": "abhi123"
   }
 ]

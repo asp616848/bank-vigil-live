@@ -51,7 +51,7 @@ export const TopBar: React.FC = () => {
       "/app/transfers": "Transfers",
       "/app/cards": "My Cards",
       "/app/profile-security": "Profile & Security",
-      "/app/security-logs": "Security Logs",
+      // "/app/security-logs": "Security Logs",
     };
     if (map[p]) return map[p];
     const seg = p.split("/").pop() || "";
@@ -65,7 +65,7 @@ export const TopBar: React.FC = () => {
     { to: "/app/transfers", label: "Transfers" },
     { to: "/app/cards", label: "My Cards" },
     { to: "/app/profile-security", label: "Profile & Security" },
-    { to: "/app/security-logs", label: "Security Logs" },
+    // { to: "/app/security-logs", label: "Security Logs" },
   ];
 
   useEffect(() => {

@@ -13,7 +13,7 @@ export const BIOMETRIC_REQUIRED_PATHS = new Set([
   '/app/statements',       // viewing statements
   '/app/cards',            // cards
   '/app/profile-security', // profile/security
-  '/app/security-logs',    // security logs
+  // '/app/security-logs',    // security logs
 ]);
 
 export const BiometricGate: React.FC = () => {

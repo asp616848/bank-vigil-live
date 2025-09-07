@@ -1498,5 +1498,694 @@
     "client_timestamp": "2025-09-02T06:22:32.299Z",
     "ip": "127.0.0.1",
     "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:39:31.630550",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:39:31.625Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:39:38.624638",
+    "action": "biometric_verification_success",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:39:37.607Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:39:38.692039",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:39:38.690Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:39:38.706463",
+    "action": "biometric_verification_success",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:39:38.704Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:39:38.833027",
+    "action": "biometric_verification_success",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:39:38.828Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:39:39.113415",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:39:39.110Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:39:39.317107",
+    "action": "biometric_verification_success",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:39:39.315Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:39:40.279546",
+    "action": "biometric_verification_success",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:39:40.276Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:39:40.444505",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:39:40.440Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:40:05.690926",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756793887212.lI0LaZ",
+      "timestamp": 1756795169730,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.584498,
+        "lon": 78.1250736,
+        "accuracy": 6137.105502766654
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:40:05.686Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.584498,
+      "lon": 78.1250736,
+      "accuracy": 6137.105502766654
+    }
+  },
+  {
+    "timestamp": "2025-09-02T06:43:57.174723",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756795428581.BBQ1x9",
+      "timestamp": 1756795428648,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:43:57.169Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:44:03.928794",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756795428581.BBQ1x9",
+      "timestamp": 1756795428648,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:44:03.925Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:44:29.055787",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756795428581.BBQ1x9",
+      "timestamp": 1756795428648,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:44:29.051Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:51:18.974709",
+    "action": "email_verification_attempt",
+    "email": "you@example.test",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756795872207.J7g10n",
+      "timestamp": 1756795872284,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:51:18.970Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:51:49.407625",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756795900664.ld7Pg8",
+      "timestamp": 1756795900735,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:51:49.403Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:51:53.665343",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756795900664.ld7Pg8",
+      "timestamp": 1756795900735,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:51:53.663Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:51:56.316212",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756795900664.ld7Pg8",
+      "timestamp": 1756795900735,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:51:56.313Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:52:08.088086",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756795900664.ld7Pg8",
+      "timestamp": 1756795900735,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:52:08.085Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:53:00.712107",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756795900664.ld7Pg8",
+      "timestamp": 1756795947083,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:53:00.708Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:54:27.956620",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756796060338.7InJVJ",
+      "timestamp": 1756796060408,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:54:27.952Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:54:34.015383",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756796060338.7InJVJ",
+      "timestamp": 1756796060408,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:54:34.012Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:54:48.611514",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756796060338.7InJVJ",
+      "timestamp": 1756796060408,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:54:48.608Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T06:56:20.316793",
+    "action": "honeypot_triggered",
+    "email": null,
+    "fingerprint": {
+      "visitorId": "4UR0bMyhqgrsRpFrvCzx",
+      "confidence": 0.99,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "117.0.0",
+        "os": "Windows",
+        "osVersion": "10"
+      },
+      "requestId": "1756796060338.7InJVJ",
+      "timestamp": 1756796145500,
+      "ip": "127.0.0.1"
+    },
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T06:56:20.312Z",
+    "ip": "127.0.0.1",
+    "coords": null
+  },
+  {
+    "timestamp": "2025-09-02T11:02:06.425825",
+    "action": "email_verification_attempt",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756810874320.dnwNaB",
+      "timestamp": 1756810874377,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.6024974,
+        "lon": 78.1222225,
+        "accuracy": 1680.8579172966263
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T11:02:06.407Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.6024974,
+      "lon": 78.1222225,
+      "accuracy": 1680.8579172966263
+    }
+  },
+  {
+    "timestamp": "2025-09-02T11:02:26.065187",
+    "action": "biometric_verification_failed",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756810874320.dnwNaB",
+      "timestamp": 1756810874377,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.6024974,
+        "lon": 78.1222225,
+        "accuracy": 1680.8579172966263
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T11:02:26.058Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.6024974,
+      "lon": 78.1222225,
+      "accuracy": 1680.8579172966263
+    }
+  },
+  {
+    "timestamp": "2025-09-02T11:03:25.038070",
+    "action": "login_success_via_otp",
+    "email": "asp616848@gmail.com",
+    "fingerprint": {
+      "visitorId": "912mRfA1gULLt9r9N02l",
+      "confidence": 1,
+      "browserDetails": {
+        "browserName": "Chrome",
+        "browserVersion": "139.0.0",
+        "os": "Linux",
+        "osVersion": "Unknown"
+      },
+      "requestId": "1756810874320.dnwNaB",
+      "timestamp": 1756810874377,
+      "ip": "127.0.0.1",
+      "coords": {
+        "lat": 17.6024974,
+        "lon": 78.1222225,
+        "accuracy": 1680.8579172966263
+      }
+    },
+    "user_agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36",
+    "client_timestamp": "2025-09-02T11:03:25.028Z",
+    "ip": "127.0.0.1",
+    "coords": {
+      "lat": 17.6024974,
+      "lon": 78.1222225,
+      "accuracy": 1680.8579172966263
+    }
   }
 ]
